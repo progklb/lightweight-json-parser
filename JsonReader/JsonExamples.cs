@@ -8,7 +8,8 @@ namespace JsonReader
 {
     public static class JsonExamples
     {
-        public const string SIMPLE_OBJECT =
+        #region CONSTANTS
+        public const string SIMPLE_KVP_OBJECT =
 @"{
     ""id"": ""Dwu85P9SOIk"",
     ""created_at"": ""2016 - 05 - 03T11:00:28 - 04:00"",
@@ -22,7 +23,24 @@ namespace JsonReader
     ""description"": ""A man drinking a coffee.""
 }";
 
-        public const string SIMPLE_ARRAY =
+        public const string SIMPLE_MIXED_OBJECT =
+@"{
+    ""id"": ""Dwu85P9SOIk"",
+    ""downloads"": 1345,
+    ""likes"": 24,
+    ""liked_by_user"": false,
+    ""description"": ""A man drinking a coffee."",
+    ""exif"": {
+            ""make"": ""Canon"",
+            ""model"": ""Canon EOS 40D"",
+            ""exposure_time"": ""0.011111111111111112"",
+            ""aperture"": ""4.970854"",
+            ""focal_length"": ""37"",
+            ""iso"": 100
+            },
+}";
+
+        public const string SIMPLE_KVP_ARRAY =
 @"[{
     ""id"": ""Dwu85P9SOIk""
     },
@@ -30,8 +48,29 @@ namespace JsonReader
     ""id"": ""uAKJ6874Ffy""
     }
 ]}";
+        public const string SIMPLE_MIXED_ARRAY =
+@"{[ 
+    {""exif"": {
+        ""make"": ""Canon"",
+        ""model"": ""Canon EOS 5D"",
+        ""exposure_time"": ""0.011111111111111112"",
+        ""aperture"": ""4.970854"",
+        ""focal_length"": ""270"",
+        ""iso"": 400
+        }
+    },
+    {""exif"": {
+        ""make"": ""Canon"",
+        ""model"": ""Canon EOS 40D"",
+        ""exposure_time"": ""0.011111111111111112"",
+        ""aperture"": ""4.970854"",
+        ""focal_length"": ""37"",
+        ""iso"": 100
+        }
+    }
+]}";
 
-        public const string COMPLEX_OBJECT =
+        public const string COMPLEX_MIXED_OBJECT =
 @"{
     ""id"": ""Dwu85P9SOIk"",
     ""created_at"": ""2016 - 05 - 03T11:00:28 - 04:00"",
@@ -79,6 +118,7 @@ namespace JsonReader
     ]
 }";
 
-        public const string INVALID_JSON = @" ({}";
+        public const string INVALID_OBJECT = @" ({}";
+        #endregion
     }
 }
