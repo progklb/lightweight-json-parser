@@ -8,7 +8,7 @@ namespace JsonReader
 {
     public static class JsonExamples
     {
-        public const string jsonStringSimple =
+        public const string SIMPLE_OBJECT =
 @"{
     ""id"": ""Dwu85P9SOIk"",
     ""created_at"": ""2016 - 05 - 03T11:00:28 - 04:00"",
@@ -22,7 +22,16 @@ namespace JsonReader
     ""description"": ""A man drinking a coffee.""
 }";
 
-        public const string jsonStringComplex =
+        public const string SIMPLE_ARRAY =
+@"[{
+    ""id"": ""Dwu85P9SOIk""
+    },
+    {
+    ""id"": ""uAKJ6874Ffy""
+    }
+]}";
+
+        public const string COMPLEX_OBJECT =
 @"{
     ""id"": ""Dwu85P9SOIk"",
     ""created_at"": ""2016 - 05 - 03T11:00:28 - 04:00"",
@@ -69,5 +78,7 @@ namespace JsonReader
         }
     ]
 }";
+
+        public const string INVALID_JSON = @" ({}";
     }
 }

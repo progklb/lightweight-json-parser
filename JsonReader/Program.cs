@@ -9,7 +9,10 @@ namespace JsonReader
         #region ENTRY POINT
         static void Main(string[] args)
         {
-            ExamineJson(JsonExamples.jsonStringSimple);
+            ExamineJson(JsonExamples.SIMPLE_OBJECT, "Simple string");
+            ExamineJson(JsonExamples.SIMPLE_ARRAY, "Simple array");
+            ExamineJson(JsonExamples.COMPLEX_OBJECT, "Complex string");
+            ExamineJson(JsonExamples.INVALID_JSON, "Invalid string");
 
             Console.Read();
         }
@@ -17,24 +20,40 @@ namespace JsonReader
 
 
         #region HELPERS
-        static void ExamineJson(string jsonString)
+        static void ExamineJson(string jsonString, string name = "Unspecified string")
         {
-            var sb = new StringBuilder();
+            var strB = new StringBuilder();
+            LWJson jsonObj;
 
-            sb  .AppendLine("---------------------------------------")
-                .AppendLine("Start Examination")
+            strB.AppendLine("---------------------------------------")
+                .AppendLine($"Start Examination ({name})")
                 .AppendLine("---------------------------------------");
 
-            sb.Append("Processing... ");
-            var obj = LWJson.Parse(jsonString);
-            sb.Append("Done!");
+            strB.AppendLine("Preview of JSON string provided:")
+                .Append(jsonString.Substring(0, Math.Min(jsonString.Length, 100))).AppendLine("...").AppendLine();
 
-            sb  .AppendLine("JSON string provided:")
-                .AppendFormat(" - IsValue {0}", obj.IsValue).AppendLine()
-                .AppendFormat(" - IsObject {0}", obj.IsObject).AppendLine()
-                .AppendFormat(" - IsArray {0}", obj.IsArray).AppendLine();
+            // Catch any exceptions thrown while processing.
+            // These will be thrown if invalid JSON formatting is encountered.
+            strB.Append("Processing... ");
+            try
+            {
+                jsonObj = LWJson.Parse(jsonString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(strB.ToString());
+                Console.WriteLine($"Invalid JSON provided. Exception thrown: {e.Message}");
+                return;
+            }
+            strB.AppendLine("Done!").AppendLine();
 
-            Console.WriteLine(sb.ToString());
+            // Display details about the processed JSON
+            strB.AppendLine("Details:")
+                .AppendLine($" - IsValue: {jsonObj.IsValue}")
+                .AppendLine($" - IsObject: {jsonObj.IsObject}")
+                .AppendLine($" - IsArray: {jsonObj.IsArray}");
+
+            Console.WriteLine(strB.ToString());
         }
         #endregion
 

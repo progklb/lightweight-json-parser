@@ -23,20 +23,17 @@ namespace LightWeightJsonParser
         #endregion
 
 
-        #region PARSING
+        #region HELPERS
         public static LWJson Parse(string jsonString)
         {
-            return null;
-            if (jsonString[0] == '[')
+            jsonString = jsonString.Trim();
+
+            switch (jsonString[0])
             {
-                return new LWJsonArray();
+                case '[':   return new LWJsonArray();
+                case '{':   return new LWJsonObject();
+                default:    throw new Exception($"Invalid initial character of JSON string: \"{jsonString[0]}\"");
             }
-            else if (jsonString[0] == '{')
-            {
-                return new LWJsonObject();
-            }
-            
-            return null;
         }
         #endregion
     }
