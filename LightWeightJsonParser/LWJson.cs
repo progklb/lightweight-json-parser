@@ -1,4 +1,5 @@
 ﻿using System;
+using DataType = LightWeightJsonParser.LWJsonValue.DataType;
 
 namespace LightWeightJsonParser
 {
@@ -34,22 +35,22 @@ namespace LightWeightJsonParser
         /// Whether this object is a string-based value.
         /// { "key" : "string" }
         /// </summary>
-        public bool IsString { get { return (this.IsValue ? (this as LWJsonValue).Type == LWJsonValue.DataType.String : false); } }
+        public bool IsString { get { return (this.IsValue ? (this as LWJsonValue).Type == DataType.String : false); } }
         /// <summary>
         /// Whether this object is a boolean-based value.
         /// { "key" : true }
         /// </summary>
-        public bool IsBoolean { get { return (this.IsValue ? (this as LWJsonValue).Type == LWJsonValue.DataType.Boolean : false); } }
+        public bool IsBoolean { get { return (this.IsValue ? (this as LWJsonValue).Type == DataType.Boolean : false); } }
         /// <summary>
         /// Whether this object is an integer-based value.
         /// { "key" : 25 }
         /// </summary>
-        public bool IsInteger { get { return (this.IsValue ? (this as LWJsonValue).Type == LWJsonValue.DataType.Integer : false); } }
+        public bool IsInteger { get { return (this.IsValue ? (this as LWJsonValue).Type == DataType.Integer : false); } }
         /// <summary>
         /// Whether this object is a double-based value.
         /// { "key" : 1.8458 }
         /// </summary>
-        public bool IsDouble { get { return (this.IsValue ? (this as LWJsonValue).Type == LWJsonValue.DataType.Double : false); } }
+        public bool IsDouble { get { return (this.IsValue ? (this as LWJsonValue).Type == DataType.Double : false); } }
         /// <summary>
         /// Whether this object is an array of sub-objects of key-value pairs.
         /// { "key" : [{...},...] }

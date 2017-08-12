@@ -80,7 +80,15 @@ namespace JsonReader
         /// </summary>
         static void CreateJson()
         {
-            // The JSON that we will build below (full)
+            var strB = new StringBuilder();
+
+            strB.AppendLine("---------------------------------------")
+                .AppendLine($"Start Creation")
+                .AppendLine("---------------------------------------");
+
+            strB.AppendLine("Creating... ");
+
+            // The JSON that we will build below
             /*{
                  "name" : "Kevin",
                  "age" : 25,
@@ -97,14 +105,6 @@ namespace JsonReader
                     }
                  ]
             }*/
-
-            var strB = new StringBuilder();
-
-            strB.AppendLine("---------------------------------------")
-                .AppendLine($"Start Creation")
-                .AppendLine("---------------------------------------");
-
-            strB.AppendLine("Creating... ");
 
             // Create a root object and push data into it.
             var root = new LWJsonObject();
@@ -134,12 +134,12 @@ namespace JsonReader
             var cameras = root["cameras"];
             var camera2model = root["cameras"][1]["model"];
 
-            strB.AppendLine($"Name = {name}")
-                .AppendLine($"Age = {age}")
-                .AppendLine($"Has camera = {hasCam}")
-                .AppendLine($"Photos per day = {photosPerDay}")
-                .AppendLine($"Cameras = {cameras}")
-                .AppendLine($"Camera2make = {camera2model}");
+            strB.AppendLine($"({})\tName = {name}")
+                .AppendLine($"({})\tAge = {age}")
+                .AppendLine($"({})\tHas camera = {hasCam}")
+                .AppendLine($"({})\tPhotos per day = {photosPerDay}")
+                .AppendLine($"({})\tCameras = {cameras}")
+                .AppendLine($"({})\tCamera2make = {camera2model}");
 
             Console.WriteLine(strB.ToString());
         }
