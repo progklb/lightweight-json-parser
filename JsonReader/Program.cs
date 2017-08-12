@@ -134,12 +134,12 @@ namespace JsonReader
             var cameras = root["cameras"];
             var camera2model = root["cameras"][1]["model"];
 
-            strB.AppendLine($"({})\tName = {name}")
-                .AppendLine($"({})\tAge = {age}")
-                .AppendLine($"({})\tHas camera = {hasCam}")
-                .AppendLine($"({})\tPhotos per day = {photosPerDay}")
-                .AppendLine($"({})\tCameras = {cameras}")
-                .AppendLine($"({})\tCamera2make = {camera2model}");
+            strB.AppendLine($"Name = {name}")
+                .AppendLine($"Age = {age}")
+                .AppendLine($"Has camera = {hasCam}")
+                .AppendLine($"Photos per day = {photosPerDay}")
+                .AppendLine($"Cameras = {cameras}")
+                .AppendLine($"Camera 2 make = {camera2model}");
 
             Console.WriteLine(strB.ToString());
         }
