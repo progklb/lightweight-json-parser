@@ -12,7 +12,7 @@ namespace LightWeightJsonParser
     /// (e.g. { "name" : "Kevin" })
     /// </para>
     /// </summary>
-    public class LWJsonValue : LWJson
+    public sealed class LWJsonValue : LWJson
     {
         #region TYPE
         internal enum DataType
@@ -32,6 +32,8 @@ namespace LightWeightJsonParser
 
 
         #region CONSTRUCTORS
+        public LWJsonValue() {}
+
         public LWJsonValue(string value)
         {
             Value = $"\"{value}\"";
@@ -65,6 +67,39 @@ namespace LightWeightJsonParser
 
 
         #region STRING HANDLING
+        new internal bool Parse(string value)
+        {
+            bool success = false;
+
+            if (IsStringQuote(value[0]) && IsStringQuote(value[value.Length - 1]))
+            {
+                success = true;
+                Type = DataType.String;
+            }
+            else if (bool.TryParse(value, out bool b))
+            {
+                success = true;
+                Type = DataType.Boolean;
+            }
+            else if (int.TryParse(value, out int i))
+            {
+                success = true;
+                Type = DataType.Integer;
+            }
+            else if (double.TryParse(value, out double d))
+            {
+                success = true;
+                Type = DataType.Double;
+            }
+
+            if (success)
+            {
+                Value = value;
+            }
+
+            return success;
+        }
+
         public override string ToString()
         {
             return Value;

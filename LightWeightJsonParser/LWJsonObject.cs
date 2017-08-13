@@ -6,16 +6,18 @@ namespace LightWeightJsonParser
 {
     /// <summary>
     /// Represents a a collection of key-value pairs that makes up an object. Note that each value
-    /// can be of any type <see cref="LWJsonValue"/>,  <see cref="LWJsonObject"/>, or  <see cref="LWJsonArray"/>.
+    /// can be of any type <see cref="LWJsonValue"/>, <see cref="LWJsonObject"/>, or <see cref="LWJsonArray"/>.
     /// <para>
     /// { key1 : ..., key2 : ..., keyN : ... }
     /// </para>
     /// <para>
-    /// (e.g. { "name" : "Kevin", "location" : {...}, categories" : [...],  } )
+    /// (e.g. { "name" : "Kevin", "location" : {...}, categories" : [...]  } )
     /// </para>
     /// </summary>
-    public class LWJsonObject : LWJson
+    public sealed class LWJsonObject : LWJson
     {
+        public static event Action<string> OnOutput = delegate { };
+
         #region INDEXERS
         public override LWJson this[int i]
         {
@@ -141,7 +143,102 @@ namespace LightWeightJsonParser
         #region STRING HANDLING
         new internal void Parse(string jsonChunk)
         {
+            // Check that we have valid JSON and clear this object's data (incase of reuse)
+            CheckChunkValidity(jsonChunk);
+            ObjectData = new Dictionary<string, LWJson>();
+
+            // Break into key-value pairs.
+            // Note that we start after the opening '{' and end before the closing '}'
+
+            int i = 1;
+
+            do
+            {
+                OnOutput($"start: i={i}={jsonChunk[i]}");
+
+                // Extract the key:
+                int startIdx = -1, endIdx = -1;
+                while (endIdx == -1)
+                {
+                    if (IsStringQuote(jsonChunk[i]))
+                    {
+                        if (startIdx == -1)
+                        {
+                            startIdx = i + 1;
+                        }
+                        else
+                        {
+                            endIdx = i - 1;
+                        }
+                    }
+
+                    ++i;
+                }
+
+                string key = jsonChunk.Substring(startIdx, endIdx - startIdx + 1);
+
+                OnOutput($"key: i={i}={jsonChunk[i]} (key={key})");
+
+
+                // Skip over seperator and whitespace
+                while (jsonChunk[i] == ' ' || jsonChunk[i] == ':') { ++i; }
+
+                // Process the value
+                LWJson value = null;
+
+                if (jsonChunk[i] == '{')
+                {
+                    OnOutput($"obj : i={i}={jsonChunk[i]}");
+
+                    var chunk = ChunkBlock(jsonChunk, i);
+                    i += chunk.Length;
+
+                    value = new LWJsonObject();
+                    (value as LWJsonObject).Parse(chunk);
+                }
+                else if (jsonChunk[i] == '[')
+                {
+                    OnOutput($"arr : i={i}={jsonChunk[i]}");
+
+                    var chunk = ChunkBlock(jsonChunk, i);
+                    i += chunk.Length;
+
+                    value = new LWJsonArray();
+                    (value as LWJsonArray).Parse(chunk);
+                }
+                else if (!(jsonChunk.Substring(i, 4) == "null"))
+                {
+                    OnOutput($"val : i={i}={jsonChunk[i]}");
+
+                    var chunk = ChunkValue(jsonChunk, i);
+                    i += chunk.Length;
+
+                    value = new LWJsonValue();
+                    (value as LWJsonValue).Parse(chunk);
+                }
+
+                // Add key value pair
+                Add(key, value);
+
+                OnOutput($" -- final value : i={i}={jsonChunk[i]} (val={value.ToString()})");
+
+
+                // Skip to end of whitespace
+                while (char.IsWhiteSpace(jsonChunk[i])) { i++; }
+
+            // If we have a comma there is more to process. Repeat.
+            } while (jsonChunk[i] == ',');
             
+            if (i != jsonChunk.Length - 1)
+            {
+                string failedCharPreview = (jsonChunk.Length - i > 5) ?
+                    $"{jsonChunk[i - 2]}{jsonChunk[i - 1]}'{jsonChunk[i]}'{jsonChunk[i + 1]}{jsonChunk[i + 2]}" :
+                    $"'{jsonChunk[i]}'";
+
+                throw new Exception("Parsing from JSON failed. Expected final character of object but this is not the case! " +
+                    $"(final index = {jsonChunk.Length - 1}, current index = {i}) " +
+                    $"(current index = {failedCharPreview})");
+            }
         }
 
         public override string ToString()
@@ -156,11 +253,34 @@ namespace LightWeightJsonParser
                 {
                     sb.Append(",");
                 }
-                sb.Append($"{pair.Key}:{pair.Value}");
+                sb.AppendFormat("{0}:{1}", pair.Key, (pair.Value != null ? pair.Value.ToString() : "null"));
             }
             sb.Append("}");
 
             return sb.ToString();
+        }
+        #endregion
+
+
+        #region HELPERS
+        /// <summary>
+        /// Checks that the provided JSON chunk begins with an opening curly brace '{'
+        /// and ends with a closed curly brace '}'. Thus, the expected format is '{...}'.
+        /// </summary>
+        /// <param name="jsonChunk"></param>
+        private void CheckChunkValidity(string jsonChunk)
+        {
+            if (jsonChunk[0] != '{' || jsonChunk[jsonChunk.Length - 1] != '}')
+            {
+                throw new Exception($"Invalid starting/ending character provided for parsing by {nameof(LWJsonObject)}:" +
+                    $"Starting=\"{jsonChunk[0]}\" " +
+                    $"Ending=\"{jsonChunk[jsonChunk.Length - 1]}\"");
+            }
+        }
+
+        private string ExtractItem(string json, ref int startIdx)
+        {
+            return null;
         }
         #endregion
     }

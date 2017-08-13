@@ -13,7 +13,7 @@ namespace LightWeightJsonParser
     /// (e.g. [ { "name" : "Kevin" }, { "name" : "John" }, { "name" : "Mike" } ] )
     /// </para>
     /// </summary>
-    public class LWJsonArray : LWJson
+    public sealed class LWJsonArray : LWJson
     {
         #region INDEXER
         public override LWJson this[int i]
@@ -92,6 +92,11 @@ namespace LightWeightJsonParser
 
 
         #region STRING HANDLING
+        new internal void Parse(string jsonChunk)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();

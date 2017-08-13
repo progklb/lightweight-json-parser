@@ -9,8 +9,10 @@ namespace JsonReader
         #region ENTRY POINT
         static void Main(string[] args)
         {
-            //ExamineJson(JsonExamples.SIMPLE_KVP_OBJECT, "Simple key-value object");
-            //ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
+            LWJsonObject.OnOutput += Output;
+
+            ExamineJson(JsonExamples.SIMPLE_KVP_OBJECT, "Simple key-value object");
+            ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
 
             //ExamineJson(JsonExamples.SIMPLE_KVP_ARRAY, "Simple key-value array");
             //ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY, "Simple mixed array");
@@ -19,7 +21,7 @@ namespace JsonReader
 
             //ExamineJson(JsonExamples.INVALID_OBJECT, "Invalid object");
 
-            CreateJson();
+            //CreateJson();
 
             Console.Read();
         }
@@ -27,6 +29,11 @@ namespace JsonReader
 
 
         #region HELPERS
+        static void Output(string message)
+        {
+            Console.WriteLine(" - " + message);
+        }
+
         /// <summary>
         /// Parses the provided JSON string and outputs formatted information regarding it.
         /// </summary>
@@ -69,6 +76,8 @@ namespace JsonReader
                 .AppendLine($" - IsObject: {jsonObj.IsObject}")
                 .AppendLine($" - IsArray: {jsonObj.IsArray}")
                 .AppendLine();
+
+            strB.AppendLine("Processed JSON:").AppendLine(jsonObj.ToString());
 
             Console.WriteLine(strB.ToString());
         }

@@ -76,21 +76,29 @@ namespace LightWeightJsonParser
             // Sanitise the ends of the string
             jsonString = jsonString.Trim();
 
+            LWJson json;
+
             // Check what object type to start with.
             switch (jsonString[0])
             {
                 case '{':
-                    return new LWJsonObject();
+                    json = new LWJsonObject();
+                    (json as LWJsonObject).Parse(jsonString);
+                    break;
                 case '[':
-                    return new LWJsonArray();
+                    json = new LWJsonArray();
+                    (json as LWJsonArray).Parse(jsonString);
+                    break;
                 default:
                     throw new Exception($"Invalid initial character of JSON string: \"{jsonString[0]}\"");
             }
+
+            return json;
         }
 
         private static LWJson Parse(string jsonString, int startIndex)
         {
-            string chunk = Chunk(jsonString, startIndex);
+            string chunk = ChunkBlock(jsonString, startIndex);
             int endIndex = startIndex + chunk.Length;
 
             // Check what object type to start with.
@@ -104,6 +112,8 @@ namespace LightWeightJsonParser
                 default:
                     throw new Exception($"Invalid initial character of JSON string: \"{jsonString[0]}\"");
             }
+
+            return null;
         }
 
         /// <summary>
@@ -113,17 +123,22 @@ namespace LightWeightJsonParser
         /// <param name="jsonString">The JSON string to extract an array or object from.</param>
         /// <param name="startingIdx">The index of the opening character of the array or object.</param>
         /// <returns></returns>
-        private static string Chunk(string jsonString, int startingIdx)
+        internal static string ChunkBlock(string jsonString, int startingIdx)
         {
             char openingChar = jsonString[startingIdx];
             char closingChar;
 
             switch (openingChar)
             {
-                case '{':       closingChar = '}';      break;
-                case '[':       closingChar = ']';      break;
-                default:        throw new Exception($"Invalid opening character of JSON object/array: \"{openingChar}\"" + 
-                                    "\nPlease provide a start index that corresponds to the opening of an object/array.");
+                case '{':
+                    closingChar = '}';
+                    break;
+                case '[':
+                    closingChar = ']';
+                    break;
+                default:
+                    throw new Exception($"Invalid opening character of JSON object/array: \"{openingChar}\"" +
+                        "\nPlease provide a start index that corresponds to the opening of an object/array.");
             }
 
             // Iterate through the string starting at the specified starting index.
@@ -145,6 +160,47 @@ namespace LightWeightJsonParser
                     return jsonString.Substring(startingIdx, i - startingIdx + 1);
                 }
             }
+        }
+
+        internal static string ChunkValue(string jsonString, int startingIdx)
+        {
+            char openingChar = jsonString[startingIdx];
+
+            if (IsStringQuote(openingChar))
+            {
+                for (int i = startingIdx + 1; i < jsonString.Length; ++i)
+                {
+                    if (jsonString[i] == openingChar)
+                    {
+                        return jsonString.Substring(startingIdx, i - startingIdx + 1);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = startingIdx + 1; i < jsonString.Length; ++i)
+                {
+                    if (!char.IsLetterOrDigit(jsonString[i]))
+                    {
+                        return jsonString.Substring(startingIdx, i - startingIdx);
+                    }
+                }
+            }
+
+            throw new Exception($"Failed to chunk the provided string - no approprirate closing character found.");
+        }
+        #endregion
+
+
+        #region HELPERS
+        /// <summary>
+        /// Checks whether the provided string is a valid JSON string quote character.
+        /// </summary>
+        /// <param name="character">String element to check.</param>
+        /// <returns>True if the provided string element is a string-type quote character.</returns>
+        internal static bool IsStringQuote(char character)
+        {
+            return character ==  '\'' || character == '\"';
         }
         #endregion
     }
