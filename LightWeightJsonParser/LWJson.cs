@@ -79,15 +79,31 @@ namespace LightWeightJsonParser
             // Check what object type to start with.
             switch (jsonString[0])
             {
-                case '{':       return new LWJsonObject();
-                case '[':       return new LWJsonArray();
-                default:        throw new Exception($"Invalid initial character of JSON string: \"{jsonString[0]}\"");
+                case '{':
+                    return new LWJsonObject();
+                case '[':
+                    return new LWJsonArray();
+                default:
+                    throw new Exception($"Invalid initial character of JSON string: \"{jsonString[0]}\"");
             }
         }
 
-        internal static LWJson ParseTest()
+        private static LWJson Parse(string jsonString, int startIndex)
         {
-            return null;
+            string chunk = Chunk(jsonString, startIndex);
+            int endIndex = startIndex + chunk.Length;
+
+            // Check what object type to start with.
+            switch (chunk[0])
+            {
+                case '{':
+                    var obj = new LWJsonObject();
+                    break;
+                case '[':
+                    return new LWJsonArray();
+                default:
+                    throw new Exception($"Invalid initial character of JSON string: \"{jsonString[0]}\"");
+            }
         }
 
         /// <summary>
@@ -97,7 +113,7 @@ namespace LightWeightJsonParser
         /// <param name="jsonString">The JSON string to extract an array or object from.</param>
         /// <param name="startingIdx">The index of the opening character of the array or object.</param>
         /// <returns></returns>
-        public static string Chunk(string jsonString, int startingIdx)
+        private static string Chunk(string jsonString, int startingIdx)
         {
             char openingChar = jsonString[startingIdx];
             char closingChar;

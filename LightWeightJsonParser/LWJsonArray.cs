@@ -31,6 +31,7 @@ namespace LightWeightJsonParser
 
 
         #region PROPERTIES
+        /// Holds the set of objects contained by this array.
         public List<LWJsonObject> ArrayData { get; set; }
         #endregion
 
@@ -39,7 +40,53 @@ namespace LightWeightJsonParser
         public LWJsonArray(params LWJsonObject[] objects)
         {
             ArrayData = new List<LWJsonObject>();
+            Add(objects);
+        }
+        #endregion
+
+
+        #region PUBLIC API
+        /// <summary>
+        /// Adds the set of provided objects to the array.
+        /// </summary>
+        /// <param name="objects">Objects to add to the array.</param>
+        /// <returns>This instance for chaining.</returns>
+        public LWJsonArray Add(params LWJsonObject[] objects)
+        {
             ArrayData.AddRange(objects);
+            return this;
+        }
+
+        /// <summary>
+        /// Removes the set of provided objects from the array.
+        /// </summary>
+        /// <param name="objects">Objects to remove from the array.</param>
+        /// <returns>This instance for chaining.</returns>
+        public LWJsonArray Remove(params LWJsonObject[] objects)
+        {
+            foreach (var obj in objects)
+            {
+                ArrayData.Remove(obj);
+            }
+            return this;
+        }
+        /// <summary>
+        /// Removes the object in the array at the specified index.
+        /// </summary>
+        /// <param name="index">Index to remove.</param>
+        /// <returns>This instance for chaining.</returns>
+        public LWJsonArray RemoveAt(int index)
+        {
+            ArrayData.RemoveAt(index);
+            return this;
+        }
+
+        /// <summary>
+        /// Clears all objects contained by this array.
+        /// </summary>
+        public void Clear()
+        {
+            ArrayData.Clear();
         }
         #endregion
 

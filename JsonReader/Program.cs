@@ -70,8 +70,6 @@ namespace JsonReader
                 .AppendLine($" - IsArray: {jsonObj.IsArray}")
                 .AppendLine();
 
-            strB.AppendLine("Chunked:").AppendLine(LWJson.Chunk(jsonString, 9));
-
             Console.WriteLine(strB.ToString());
         }
 
