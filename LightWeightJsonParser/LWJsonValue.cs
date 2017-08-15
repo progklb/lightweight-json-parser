@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 
 namespace LightWeightJsonParser
 {
@@ -14,19 +14,10 @@ namespace LightWeightJsonParser
     /// </summary>
     public sealed class LWJsonValue : LWJson
     {
-        #region TYPE
-        internal enum DataType
-        {
-            String,
-            Boolean,
-            Integer,
-            Double,
-        }
-        #endregion
-
-
         #region PROPERTIES
-        internal DataType Type { get; private set; }
+        /// <summary>
+        /// The value that this object represents in string form.
+        /// </summary>
         public string Value { get; set; }
         #endregion
 
@@ -36,65 +27,99 @@ namespace LightWeightJsonParser
 
         public LWJsonValue(string value)
         {
-            Value = $"\"{value}\"";
-            Type = DataType.String;
+            Value = value;
+            DataType = JsonDataType.String;
         }
 
         public LWJsonValue(bool value)
         {
             Value = value.ToString().ToLowerInvariant();
-            Type = DataType.Boolean;
+            DataType = JsonDataType.Boolean;
         }
 
         public LWJsonValue(int value)
         {
             Value = value.ToString();
-            Type = DataType.Integer;
+            DataType = JsonDataType.Integer;
         }
 
         public LWJsonValue(double value)
         {
-            // TODO Culture invariant numbers
-            Value = value.ToString().Replace(',', '.');
-            Type = DataType.Double;
+            Value = value.ToString().Replace(NumberFormatInfo.CurrentInfo.NumberDecimalSeparator, ".");
+            DataType = JsonDataType.Double;
         }
         #endregion
 
 
         #region GETTERS
-        // TODO Add getters for casts to different types
+        public override string AsString() => Value;
+
+        public override bool AsBoolean() => bool.Parse(Value);
+
+        public override int AsInteger() => int.Parse(Value);
+
+        public override double AsDouble() => double.Parse(Value.Replace(".", NumberFormatInfo.CurrentInfo.NumberDecimalSeparator));
         #endregion
 
 
         #region STRING HANDLING
+        /// <summary>
+        /// Parses the provided string and determines the type, setting the <see cref="Type"/> value
+        /// of this object and saving the provided string at the value this object represents.
+        /// </summary>
+        /// <param name="value">String value to parse.</param>
+        /// <returns>The success of parsing.</returns>
         new internal bool Parse(string value)
         {
             bool success = false;
 
+            // Determine value type.
             if (IsStringQuote(value[0]) && IsStringQuote(value[value.Length - 1]))
             {
+                // Strip quotes
+                value = value.Substring(1, value.Length - 2);
+
                 success = true;
-                Type = DataType.String;
+                DataType = JsonDataType.String;
             }
             else if (bool.TryParse(value, out bool b))
             {
                 success = true;
-                Type = DataType.Boolean;
+                DataType = JsonDataType.Boolean;
             }
             else if (int.TryParse(value, out int i))
             {
                 success = true;
-                Type = DataType.Integer;
+                DataType = JsonDataType.Integer;
             }
-            else if (double.TryParse(value, out double d))
+            // Attempt to parse as a double. Convert the digit separator to a culture-specific value.
+            else
             {
-                success = true;
-                Type = DataType.Double;
+                if (double.TryParse(value.Replace(".", NumberFormatInfo.CurrentInfo.NumberDecimalSeparator), out double d))
+                {
+                    success = true;
+                    DataType = JsonDataType.Double;
+                }
             }
 
+            // Assign value or handle failure.
             if (success)
             {
                 Value = value;
+            }
+            else
+            {
+                switch (LWJson.CurrentFailureMode)
+                {
+                    case FailureMode.Silent:
+                        Value = value;
+                        break;
+                    case FailureMode.Verbose:
+                        Value = $"value_parse_failure({value})";
+                        break;
+                    case FailureMode.Exception:
+                        throw new Exception($"Failed to parse value: {value}");
+                }
             }
 
             return success;
@@ -102,7 +127,14 @@ namespace LightWeightJsonParser
 
         public override string ToString()
         {
-            return Value;
+            if (DataType == JsonDataType.String)
+            {
+                return WrapInQuotes(Value);
+            }
+            else
+            { 
+                return Value;
+            }
         }
         #endregion
     }

@@ -9,15 +9,25 @@ namespace JsonReader
         #region ENTRY POINT
         static void Main(string[] args)
         {
-            LWJsonObject.OnOutput += Output;
+            LWJson.CurrentStringMode = StringMode.Mode.DoubleQuote;
+            LWJson.CurrentFailureMode = FailureMode.Silent;
 
-            ExamineJson(JsonExamples.SIMPLE_KVP_OBJECT, "Simple key-value object");
-            ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
+            Console.WriteLine("Is Read Only: {0}", System.Globalization.NumberFormatInfo.CurrentInfo.IsReadOnly);
+            Console.WriteLine("Number decimal separator: {0}", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
+            Console.WriteLine("Number decimal separator (invariant): {0}", System.Globalization.NumberFormatInfo.InvariantInfo.NumberDecimalSeparator);
+            Console.WriteLine("Number negative sign: {0}", System.Globalization.NumberFormatInfo.CurrentInfo.NegativeSign);
+            Console.WriteLine("Number positive sign: {0}", System.Globalization.NumberFormatInfo.CurrentInfo.PositiveSign);
+
+            //ExamineJson(JsonExamples.SIMPLE_KVP_OBJECT, "Simple key-value object");
+            //ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
+            //ExamineJson(JsonExamples.SIMPLE_MIXED_EMPTY_OBJECT, "Simple mixed empty object");
 
             //ExamineJson(JsonExamples.SIMPLE_KVP_ARRAY, "Simple key-value array");
             //ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY, "Simple mixed array");
 
             //ExamineJson(JsonExamples.COMPLEX_MIXED_OBJECT, "Complex mixed string");
+
+            ExamineJson(JsonExamples.COMPLEX_DIFF_TYPES_OBJECT, "Complex different types object");
 
             //ExamineJson(JsonExamples.INVALID_OBJECT, "Invalid object");
 
@@ -29,11 +39,6 @@ namespace JsonReader
 
 
         #region HELPERS
-        static void Output(string message)
-        {
-            Console.WriteLine(" - " + message);
-        }
-
         /// <summary>
         /// Parses the provided JSON string and outputs formatted information regarding it.
         /// </summary>
@@ -101,6 +106,7 @@ namespace JsonReader
                  "age" : 25,
                  "has_camera" : true,
                  "photos_per_day" : 1.735845,
+                 "optional_extras" : null,
                  "cameras" : [
                     {
                         "make" : "Canon",
@@ -119,6 +125,7 @@ namespace JsonReader
             root.Add("age", 25);
             root.Add("has_camera", true);
             root.Add("photos_per_day", 1.735845);
+            root.Add("optional_extras", LWJson.NULL);
             // For an array, we specify the key and add a new array with sub objects.
             // Note that LWJsonObject allows chaining of commands.
             root.Add("cameras", 

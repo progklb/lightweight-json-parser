@@ -31,7 +31,11 @@ namespace LightWeightJsonParser
 
 
         #region PROPERTIES
+        public override JsonDataType DataType { get { return JsonDataType.Array; } }
+
+        /// <summary>
         /// Holds the set of objects contained by this array.
+        /// </summary>
         public List<LWJsonObject> ArrayData { get; set; }
         #endregion
 

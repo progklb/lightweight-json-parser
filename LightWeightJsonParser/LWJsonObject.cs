@@ -16,8 +16,6 @@ namespace LightWeightJsonParser
     /// </summary>
     public sealed class LWJsonObject : LWJson
     {
-        public static event Action<string> OnOutput = delegate { };
-
         #region INDEXERS
         public override LWJson this[int i]
         {
@@ -27,14 +25,18 @@ namespace LightWeightJsonParser
 
         public override LWJson this[string key]
         {
-            get => ObjectData[$"\"{key}\""];
-            set => ObjectData[$"\"{key}\""] = (LWJsonObject)value;
+            get => ObjectData[key];
+            set => ObjectData[key] = (LWJsonObject)value;
         }
         #endregion
 
 
         #region PROPERTIES
+        public override JsonDataType DataType { get { return JsonDataType.Object; } }
+
+        /// <summary>
         /// Holds the set of key-value pairs of this object.
+        /// </summary>
         public Dictionary<string, LWJson> ObjectData = new Dictionary<string, LWJson>();
         #endregion
 
@@ -48,7 +50,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, string value)
         {
-            ObjectData.Add($"\"{key}\"", new LWJsonValue(value));
+            ObjectData.Add(key, new LWJsonValue(value));
             return this;
         }
 
@@ -60,7 +62,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, bool value)
         {
-            ObjectData.Add($"\"{key}\"", new LWJsonValue(value));
+            ObjectData.Add(key, new LWJsonValue(value));
             return this;
         }
 
@@ -72,7 +74,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, int value)
         {
-            ObjectData.Add($"\"{key}\"", new LWJsonValue(value));
+            ObjectData.Add(key, new LWJsonValue(value));
             return this;
         }
 
@@ -84,7 +86,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, double value)
         {
-            ObjectData.Add($"\"{key}\"", new LWJsonValue(value));
+            ObjectData.Add(key, new LWJsonValue(value));
             return this;
         }
 
@@ -96,7 +98,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, LWJson value)
         {
-            ObjectData.Add($"\"{key}\"", value);
+            ObjectData.Add(key, value);
             return this;
         }
 
@@ -151,15 +153,15 @@ namespace LightWeightJsonParser
             // Note that we start after the opening '{' and end before the closing '}'
 
             int i = 1;
+            bool emptyObject = false;
 
             do
             {
-                OnOutput($"start: i={i}={jsonChunk[i]}");
-
                 // Extract the key:
                 int startIdx = -1, endIdx = -1;
                 while (endIdx == -1)
                 {
+                    // Look for start/end of key.
                     if (IsStringQuote(jsonChunk[i]))
                     {
                         if (startIdx == -1)
@@ -171,14 +173,22 @@ namespace LightWeightJsonParser
                             endIdx = i - 1;
                         }
                     }
+                    // Check that we don't have an empty object.
+                    else if (jsonChunk[i] == '}')
+                    {
+                        emptyObject = true;
+                        break;
+                    }
 
                     ++i;
                 }
 
+                if (emptyObject)
+                {
+                    break;
+                }
+
                 string key = jsonChunk.Substring(startIdx, endIdx - startIdx + 1);
-
-                OnOutput($"key: i={i}={jsonChunk[i]} (key={key})");
-
 
                 // Skip over seperator and whitespace
                 while (jsonChunk[i] == ' ' || jsonChunk[i] == ':') { ++i; }
@@ -188,9 +198,7 @@ namespace LightWeightJsonParser
 
                 if (jsonChunk[i] == '{')
                 {
-                    OnOutput($"obj : i={i}={jsonChunk[i]}");
-
-                    var chunk = ChunkBlock(jsonChunk, i);
+                    var chunk = Chunk(jsonChunk, i);
                     i += chunk.Length;
 
                     value = new LWJsonObject();
@@ -198,30 +206,33 @@ namespace LightWeightJsonParser
                 }
                 else if (jsonChunk[i] == '[')
                 {
-                    OnOutput($"arr : i={i}={jsonChunk[i]}");
-
-                    var chunk = ChunkBlock(jsonChunk, i);
+                    var chunk = Chunk(jsonChunk, i);
                     i += chunk.Length;
 
                     value = new LWJsonArray();
                     (value as LWJsonArray).Parse(chunk);
                 }
-                else if (!(jsonChunk.Substring(i, 4) == "null"))
+                else if (jsonChunk.Substring(i, 4) == "null")
                 {
-                    OnOutput($"val : i={i}={jsonChunk[i]}");
-
-                    var chunk = ChunkValue(jsonChunk, i);
+                    i += 4;
+                }
+                else
+                {
+                    var chunk = Chunk(jsonChunk, i);
                     i += chunk.Length;
 
                     value = new LWJsonValue();
-                    (value as LWJsonValue).Parse(chunk);
+                    if (!(value as LWJsonValue).Parse(chunk))
+                    {
+                        if (LWJson.CurrentFailureMode == FailureMode.Nullify)
+                        {
+                            value = null;
+                        }
+                    }
                 }
 
                 // Add key value pair
                 Add(key, value);
-
-                OnOutput($" -- final value : i={i}={jsonChunk[i]} (val={value.ToString()})");
-
 
                 // Skip to end of whitespace
                 while (char.IsWhiteSpace(jsonChunk[i])) { i++; }
@@ -253,7 +264,7 @@ namespace LightWeightJsonParser
                 {
                     sb.Append(",");
                 }
-                sb.AppendFormat("{0}:{1}", pair.Key, (pair.Value != null ? pair.Value.ToString() : "null"));
+                sb.AppendFormat("{0}:{1}", WrapInQuotes(pair.Key), (pair.Value != null ? pair.Value.ToString() : "null"));
             }
             sb.Append("}");
 
@@ -276,11 +287,6 @@ namespace LightWeightJsonParser
                     $"Starting=\"{jsonChunk[0]}\" " +
                     $"Ending=\"{jsonChunk[jsonChunk.Length - 1]}\"");
             }
-        }
-
-        private string ExtractItem(string json, ref int startIdx)
-        {
-            return null;
         }
         #endregion
     }

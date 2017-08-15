@@ -20,7 +20,14 @@ namespace JsonReader
     ""downloads"": 1345,
     ""likes"": 24,
     ""liked_by_user"": false,
-    ""description"": ""A man drinking a coffee.""
+    ""description"": ""A man drinking a coffee, 'elegantly'."",
+    'remarks': 'Fantastic photo!'
+}";
+
+        public const string SIMPLE_MIXED_EMPTY_OBJECT =
+@"{
+    ""id"": ""Dwu85P9SOIk"",
+    ""exif"":{}
 }";
 
         public const string SIMPLE_MIXED_OBJECT =
@@ -37,7 +44,7 @@ namespace JsonReader
             ""aperture"": ""4.970854"",
             ""focal_length"": ""37"",
             ""iso"": 100
-            },
+            }
 }";
 
         public const string SIMPLE_KVP_ARRAY =
@@ -118,7 +125,32 @@ namespace JsonReader
     ]
 }";
 
-        public const string INVALID_OBJECT = @" ({}";
+
+        public const string COMPLEX_DIFF_TYPES_OBJECT =
+@"{
+    ""string"": ""This is a string with 'quotes' and stuff."",
+    ""date"": ""2016 - 07 - 10T11:00:01 - 05:00"",
+    ""boolean"": true,
+    ""null"" : null,
+    ""object_empty"" : {},
+    ""object_single"" : { ""key"" : ""value"" },
+    ""object_double"" : { ""key1"" : ""value1"", ""key2"" : ""value2"" },
+    ""int"": 123,
+    ""frac_1"": 123.123,
+    ""frac_2"": .123,
+    ""exp_1"": 1e5,
+    ""exp_frac_1"": 1.24e5,
+    ""exp_frac_2"": 1.24e+5,
+    ""exp_frac_3"": 1.24e-5,
+    ""exp_frac_4"": 1.24E+5,
+    ""signed_int"": -1,
+    ""signed_frac_1"": -1.24,
+    ""signed_frac_2"": +1.24,
+    ""signed_exp_frac_2"": -1.24e+5
+}";
+
+        public const string INVALID_OBJECT = 
+@" ({}";
         #endregion
     }
 }
