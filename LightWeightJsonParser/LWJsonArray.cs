@@ -36,14 +36,14 @@ namespace LightWeightJsonParser
         /// <summary>
         /// Holds the set of objects contained by this array.
         /// </summary>
-        public List<LWJsonObject> ArrayData { get; set; }
+        public List<LWJson> ArrayData { get; set; }
         #endregion
 
 
         #region CONSTRUCTOR
-        public LWJsonArray(params LWJsonObject[] objects)
+        public LWJsonArray(params LWJson[] objects)
         {
-            ArrayData = new List<LWJsonObject>();
+            ArrayData = new List<LWJson>();
             Add(objects);
         }
         #endregion
@@ -51,22 +51,22 @@ namespace LightWeightJsonParser
 
         #region PUBLIC API
         /// <summary>
-        /// Adds the set of provided objects to the array.
+        /// Adds the set of provided items to the array.
         /// </summary>
-        /// <param name="objects">Objects to add to the array.</param>
+        /// <param name="objects">Items to add to the array.</param>
         /// <returns>This instance for chaining.</returns>
-        public LWJsonArray Add(params LWJsonObject[] objects)
+        public LWJsonArray Add(params LWJson[] objects)
         {
             ArrayData.AddRange(objects);
             return this;
         }
 
         /// <summary>
-        /// Removes the set of provided objects from the array.
+        /// Removes the set of provided items from the array.
         /// </summary>
-        /// <param name="objects">Objects to remove from the array.</param>
+        /// <param name="objects">Items to remove from the array.</param>
         /// <returns>This instance for chaining.</returns>
-        public LWJsonArray Remove(params LWJsonObject[] objects)
+        public LWJsonArray Remove(params LWJson[] objects)
         {
             foreach (var obj in objects)
             {
@@ -75,7 +75,7 @@ namespace LightWeightJsonParser
             return this;
         }
         /// <summary>
-        /// Removes the object in the array at the specified index.
+        /// Removes the item in the array at the specified index.
         /// </summary>
         /// <param name="index">Index to remove.</param>
         /// <returns>This instance for chaining.</returns>
@@ -86,7 +86,7 @@ namespace LightWeightJsonParser
         }
 
         /// <summary>
-        /// Clears all objects contained by this array.
+        /// Clears all items contained by this array.
         /// </summary>
         public void Clear()
         {
@@ -96,9 +96,41 @@ namespace LightWeightJsonParser
 
 
         #region STRING HANDLING
-        new internal void Parse(string jsonChunk)
+        new internal void Parse(string jsonChunk, string outputSpacer = "")
         {
-            throw new NotImplementedException();
+            CheckChunkValidity(jsonChunk);
+
+            ArrayData = new List<LWJson>();
+
+            int i = 1;
+
+            do
+            {
+                while (char.IsWhiteSpace(jsonChunk[i])) { i++; }
+
+                LWJson value;
+
+                var chunk = Chunk(jsonChunk, i);
+                i += chunk.Length;
+
+                ParseChunk(out value, chunk, outputSpacer);
+
+                ArrayData.Add(value);
+
+                while (char.IsWhiteSpace(jsonChunk[i])) { i++; }
+
+            } while (jsonChunk[i] == ',');
+
+            if (i != jsonChunk.Length - 1)
+            {
+                string failedCharPreview = (jsonChunk.Length - i > 5) ?
+                    $"{jsonChunk[i - 2]}{jsonChunk[i - 1]}'{jsonChunk[i]}'{jsonChunk[i + 1]}{jsonChunk[i + 2]}" :
+                    $"'{jsonChunk[i]}'";
+
+                throw new Exception("Parsing from JSON failed. Expected final character of array but this is not the case! " +
+                    $"(final index = {jsonChunk.Length - 1}, current index = {i}) " +
+                    $"(current index = {failedCharPreview})");
+            }
         }
 
         public override string ToString()
@@ -118,6 +150,21 @@ namespace LightWeightJsonParser
             sb.Append("]");
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Checks that the provided JSON chunk begins with an opening square bracket '['
+        /// and ends with a closed square bracket ']'. Thus, the expected format is '[...]'.
+        /// </summary>
+        /// <param name="jsonChunk"></param>
+        private void CheckChunkValidity(string jsonChunk)
+        {
+            if (jsonChunk[0] != '[' || jsonChunk[jsonChunk.Length - 1] != ']')
+            {
+                throw new Exception($"Invalid starting/ending character provided for parsing by {nameof(LWJsonArray)}:" +
+                    $"Starting=\"{jsonChunk[0]}\" " +
+                    $"Ending=\"{jsonChunk[jsonChunk.Length - 1]}\"");
+            }
         }
         #endregion
     }

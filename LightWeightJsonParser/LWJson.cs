@@ -37,6 +37,14 @@ namespace LightWeightJsonParser
         #endregion
 
 
+        #region EVENTS
+        /// <summary>
+        /// Is raised during Parse operations on every item parsed. This helps identify where parsing is failing.
+        /// </summary>
+        public static Action<string> OnItemParsed = delegate { };
+        #endregion
+
+
         #region PROPERTIES
         /// <summary>
         /// The string mode that determines the quotation marks used when outputting a <see cref="LWJson"/> object to a JSON string.
@@ -131,6 +139,45 @@ namespace LightWeightJsonParser
             }
 
             return json;
+        }
+
+        /// <summary>
+        /// Provided a valid string chunk (object, array, or value type) this will parse the chunk and assign
+        /// a corresponding value to the provided <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The object which to assign the parse chunk's value to.</param>
+        /// <param name="chunk">The string of JSON to parse. This must be trimmed correctly beforehand.</param>
+        /// <param name="outputSpacer">An optional parameter that inserts spacing for formatting output of the <see cref="OnItemParsed"/> event.</param>
+        public void ParseChunk(out LWJson value, string chunk, string outputSpacer = "")
+        {
+            if (chunk[0] == '{')
+            {
+                value = new LWJsonObject();
+                (value as LWJsonObject).Parse(chunk, outputSpacer + "\t");
+            }
+            else if (chunk[0] == '[')
+            {
+                value = new LWJsonArray();
+                (value as LWJsonArray).Parse(chunk, outputSpacer + "\t");
+            }
+            else if (chunk == "null")
+            {
+                value = null;
+                OnItemParsed($"{outputSpacer}null");
+            }
+            else
+            {
+                value = new LWJsonValue();
+                if (!(value as LWJsonValue).Parse(chunk))
+                {
+                    if (LWJson.CurrentFailureMode == FailureMode.Nullify)
+                    {
+                        value = null;
+                    }
+                }
+
+                OnItemParsed($"{outputSpacer}{value.ToString()}");
+            }
         }
 
         /// <summary>
@@ -264,6 +311,15 @@ namespace LightWeightJsonParser
         {
             var quote = LWJson.CurrentStringMode == StringMode.Mode.SingleQuote ? StringMode.SINGLE_QUOTE : StringMode.DOUBLE_QUOTE;
             return $"{quote}{val}{quote}";
+        }
+
+        /// <summary>
+        /// Raises the <see cref="OnItemParsed"/> event with the provided text.
+        /// </summary>
+        /// <param name="text">Text to pass with event.</param>
+        protected void RaiseOnItemParsed(string text)
+        {
+            OnItemParsed(text);
         }
         #endregion
     }

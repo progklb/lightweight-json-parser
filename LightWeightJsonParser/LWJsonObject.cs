@@ -143,7 +143,7 @@ namespace LightWeightJsonParser
 
 
         #region STRING HANDLING
-        new internal void Parse(string jsonChunk)
+        new internal void Parse(string jsonChunk, string outputSpacer = "")
         {
             // Check that we have valid JSON and clear this object's data (incase of reuse)
             CheckChunkValidity(jsonChunk);
@@ -189,47 +189,18 @@ namespace LightWeightJsonParser
                 }
 
                 string key = jsonChunk.Substring(startIdx, endIdx - startIdx + 1);
+                OnItemParsed($"{outputSpacer}{key}");
 
                 // Skip over seperator and whitespace
                 while (jsonChunk[i] == ' ' || jsonChunk[i] == ':') { ++i; }
 
                 // Process the value
-                LWJson value = null;
+                LWJson value;
 
-                if (jsonChunk[i] == '{')
-                {
-                    var chunk = Chunk(jsonChunk, i);
-                    i += chunk.Length;
+                var chunk = Chunk(jsonChunk, i);
+                i += chunk.Length;
 
-                    value = new LWJsonObject();
-                    (value as LWJsonObject).Parse(chunk);
-                }
-                else if (jsonChunk[i] == '[')
-                {
-                    var chunk = Chunk(jsonChunk, i);
-                    i += chunk.Length;
-
-                    value = new LWJsonArray();
-                    (value as LWJsonArray).Parse(chunk);
-                }
-                else if (jsonChunk.Substring(i, 4) == "null")
-                {
-                    i += 4;
-                }
-                else
-                {
-                    var chunk = Chunk(jsonChunk, i);
-                    i += chunk.Length;
-
-                    value = new LWJsonValue();
-                    if (!(value as LWJsonValue).Parse(chunk))
-                    {
-                        if (LWJson.CurrentFailureMode == FailureMode.Nullify)
-                        {
-                            value = null;
-                        }
-                    }
-                }
+                ParseChunk(out value, chunk, outputSpacer);
 
                 // Add key value pair
                 Add(key, value);
@@ -250,6 +221,11 @@ namespace LightWeightJsonParser
                     $"(final index = {jsonChunk.Length - 1}, current index = {i}) " +
                     $"(current index = {failedCharPreview})");
             }
+        }
+
+        void ParseChunk()
+        {
+
         }
 
         public override string ToString()

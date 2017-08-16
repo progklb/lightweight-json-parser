@@ -12,28 +12,27 @@ namespace JsonReader
             LWJson.CurrentStringMode = StringMode.Mode.DoubleQuote;
             LWJson.CurrentFailureMode = FailureMode.Silent;
 
-            Console.WriteLine("Is Read Only: {0}", System.Globalization.NumberFormatInfo.CurrentInfo.IsReadOnly);
-            Console.WriteLine("Number decimal separator: {0}", System.Globalization.NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
-            Console.WriteLine("Number decimal separator (invariant): {0}", System.Globalization.NumberFormatInfo.InvariantInfo.NumberDecimalSeparator);
-            Console.WriteLine("Number negative sign: {0}", System.Globalization.NumberFormatInfo.CurrentInfo.NegativeSign);
-            Console.WriteLine("Number positive sign: {0}", System.Globalization.NumberFormatInfo.CurrentInfo.PositiveSign);
+            LWJson.OnItemParsed += (s) => { Console.WriteLine("parsed: " + s); };
+
+            // Note: Problem with nested objects : { { "blah":"val" } }  -- is this even valid JSON ? :/
 
             //ExamineJson(JsonExamples.SIMPLE_KVP_OBJECT, "Simple key-value object");
             //ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
             //ExamineJson(JsonExamples.SIMPLE_MIXED_EMPTY_OBJECT, "Simple mixed empty object");
 
-            //ExamineJson(JsonExamples.SIMPLE_KVP_ARRAY, "Simple key-value array");
+            ExamineJson(JsonExamples.SIMPLE_KVP_ARRAY, "Simple key-value array");
             //ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY, "Simple mixed array");
 
             //ExamineJson(JsonExamples.COMPLEX_MIXED_OBJECT, "Complex mixed string");
 
-            ExamineJson(JsonExamples.COMPLEX_DIFF_TYPES_OBJECT, "Complex different types object");
+            //ExamineJson(JsonExamples.COMPLEX_DIFF_TYPES_OBJECT, "Complex different types object");
 
             //ExamineJson(JsonExamples.INVALID_OBJECT, "Invalid object");
 
             //CreateJson();
 
             Console.Read();
+
         }
         #endregion
 

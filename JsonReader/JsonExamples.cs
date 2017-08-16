@@ -49,12 +49,13 @@ namespace JsonReader
 
         public const string SIMPLE_KVP_ARRAY =
 @"[{
+    {
     ""id"": ""Dwu85P9SOIk""
     },
     {
     ""id"": ""uAKJ6874Ffy""
     }
-]}";
+}]";
         public const string SIMPLE_MIXED_ARRAY =
 @"{[ 
     {""exif"": {
