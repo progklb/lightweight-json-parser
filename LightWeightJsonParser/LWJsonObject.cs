@@ -143,7 +143,7 @@ namespace LightWeightJsonParser
 
 
         #region STRING HANDLING
-        new internal void Parse(string jsonChunk, string outputSpacer = "")
+        internal void Parse(string jsonChunk, string outputSpacer = "")
         {
             // Check that we have valid JSON and clear this object's data (incase of reuse)
             CheckChunkValidity(jsonChunk);
@@ -183,16 +183,13 @@ namespace LightWeightJsonParser
                     ++i;
                 }
 
-                if (emptyObject)
-                {
-                    break;
-                }
+                if (emptyObject) { break; }
 
                 string key = jsonChunk.Substring(startIdx, endIdx - startIdx + 1);
                 OnItemParsed($"{outputSpacer}{key}");
 
                 // Skip over seperator and whitespace
-                while (jsonChunk[i] == ' ' || jsonChunk[i] == ':') { ++i; }
+                while (char.IsWhiteSpace(jsonChunk[i]) || jsonChunk[i] == ':') { ++i; }
 
                 // Process the value
                 LWJson value;
@@ -208,7 +205,7 @@ namespace LightWeightJsonParser
                 // Skip to end of whitespace
                 while (char.IsWhiteSpace(jsonChunk[i])) { i++; }
 
-            // If we have a comma there is more to process. Repeat.
+                // If we have a comma there is more to process. Repeat.
             } while (jsonChunk[i] == ',');
             
             if (i != jsonChunk.Length - 1)
@@ -221,11 +218,6 @@ namespace LightWeightJsonParser
                     $"(final index = {jsonChunk.Length - 1}, current index = {i}) " +
                     $"(current index = {failedCharPreview})");
             }
-        }
-
-        void ParseChunk()
-        {
-
         }
 
         public override string ToString()

@@ -49,34 +49,20 @@ namespace JsonReader
 
         public const string SIMPLE_KVP_ARRAY =
 @"[{
-    {
-    ""id"": ""Dwu85P9SOIk""
-    },
-    {
-    ""id"": ""uAKJ6874Ffy""
-    }
+    'a': { 'id': 'Dwu85P9SOIk' },
+    'b': { 'id': 'uAKJ6874Ffy' }
 }]";
-        public const string SIMPLE_MIXED_ARRAY =
-@"{[ 
-    {""exif"": {
-        ""make"": ""Canon"",
-        ""model"": ""Canon EOS 5D"",
-        ""exposure_time"": ""0.011111111111111112"",
-        ""aperture"": ""4.970854"",
-        ""focal_length"": ""270"",
-        ""iso"": 400
-        }
-    },
-    {""exif"": {
-        ""make"": ""Canon"",
-        ""model"": ""Canon EOS 40D"",
-        ""exposure_time"": ""0.011111111111111112"",
-        ""aperture"": ""4.970854"",
-        ""focal_length"": ""37"",
-        ""iso"": 100
-        }
-    }
-]}";
+
+        public const string SIMPLE_MIXED_ARRAY_1 =
+@"{ 'entries' : ['test','test'], 'emptyentry' : [] }";
+
+        public const string SIMPLE_MIXED_ARRAY_2 =
+@"{ 'entries' : 
+    [
+        { 'exif': {'focal_length': '270', 'iso': 400 } },
+        { 'exif': {'focal_length': '270', 'iso': 400 } }
+    ]
+}";
 
         public const string COMPLEX_MIXED_OBJECT =
 @"{
@@ -112,16 +98,18 @@ namespace JsonReader
             ""title"": ""Nature"",
             ""photo_count"": 24783,
             ""links"": {
-            ""self"": ""https://api.unsplash.com/categories/4"",
-            ""photos"": ""https://api.unsplash.com/categories/4/photos""
+                ""self"": ""https://api.unsplash.com/categories/4"",
+                ""photos"": ""https://api.unsplash.com/categories/4/photos""
+                }
         },
         {
             ""id"": 5,
             ""title"": ""Home"",
             ""photo_count"": 6581,
             ""links"": {
-            ""self"": ""https://api.unsplash.com/categories/5"",
-            ""photos"": ""https://api.unsplash.com/categories/5/photos""
+                ""self"": ""https://api.unsplash.com/categories/5"",
+                ""photos"": ""https://api.unsplash.com/categories/5/photos""
+            }
         }
     ]
 }";

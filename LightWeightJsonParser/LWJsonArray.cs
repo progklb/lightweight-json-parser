@@ -96,29 +96,35 @@ namespace LightWeightJsonParser
 
 
         #region STRING HANDLING
-        new internal void Parse(string jsonChunk, string outputSpacer = "")
+        internal void Parse(string jsonChunk, string outputSpacer = "")
         {
             CheckChunkValidity(jsonChunk);
 
             ArrayData = new List<LWJson>();
 
-            int i = 1;
+            int i = 0;
 
             do
             {
-                while (char.IsWhiteSpace(jsonChunk[i])) { i++; }
+                // Because we start at index i=0 which is '[', 
+                // or loop back here on an encountered comma separator ',',
+                // iterate before checking if the character is whitespace.
+                do { i++; } while (char.IsWhiteSpace(jsonChunk[i]));
 
-                LWJson value;
+                // Check if empty and only process if not.
+                if (jsonChunk[i] != ']')
+                {
+                    LWJson value;
 
-                var chunk = Chunk(jsonChunk, i);
-                i += chunk.Length;
+                    var chunk = Chunk(jsonChunk, i);
+                    i += chunk.Length;
 
-                ParseChunk(out value, chunk, outputSpacer);
+                    ParseChunk(out value, chunk, outputSpacer);
 
-                ArrayData.Add(value);
+                    ArrayData.Add(value);
 
-                while (char.IsWhiteSpace(jsonChunk[i])) { i++; }
-
+                    while (char.IsWhiteSpace(jsonChunk[i])) { i++; }
+                }
             } while (jsonChunk[i] == ',');
 
             if (i != jsonChunk.Length - 1)
@@ -145,7 +151,7 @@ namespace LightWeightJsonParser
                 {
                     sb.Append(",");
                 }
-                sb.Append($"{obj}");
+                sb.Append($"{obj.ToString()}");
             }
             sb.Append("]");
 

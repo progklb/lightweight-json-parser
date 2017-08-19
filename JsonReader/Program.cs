@@ -12,7 +12,7 @@ namespace JsonReader
             LWJson.CurrentStringMode = StringMode.Mode.DoubleQuote;
             LWJson.CurrentFailureMode = FailureMode.Silent;
 
-            LWJson.OnItemParsed += (s) => { Console.WriteLine("parsed: " + s); };
+            LWJson.OnItemParsed += (s) => { Console.WriteLine("- " + s); };
 
             // Note: Problem with nested objects : { { "blah":"val" } }  -- is this even valid JSON ? :/
 
@@ -20,8 +20,10 @@ namespace JsonReader
             //ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
             //ExamineJson(JsonExamples.SIMPLE_MIXED_EMPTY_OBJECT, "Simple mixed empty object");
 
-            ExamineJson(JsonExamples.SIMPLE_KVP_ARRAY, "Simple key-value array");
-            //ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY, "Simple mixed array");
+            //ExamineJson(JsonExamples.SIMPLE_KVP_ARRAY, "Simple key-value array");
+
+            //ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY_1, "Simple mixed array 1");
+            //ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY_2, "Simple mixed array 2");
 
             //ExamineJson(JsonExamples.COMPLEX_MIXED_OBJECT, "Complex mixed string");
 
@@ -29,7 +31,7 @@ namespace JsonReader
 
             //ExamineJson(JsonExamples.INVALID_OBJECT, "Invalid object");
 
-            //CreateJson();
+            CreateJson();
 
             Console.Read();
 
@@ -56,19 +58,9 @@ namespace JsonReader
             strB.AppendLine("Preview of JSON string provided:")
                 .Append(jsonString.Substring(0, Math.Min(jsonString.Length, 100))).AppendLine("...").AppendLine();
 
-            // Catch any exceptions thrown while processing.
-            // These will be thrown if invalid JSON formatting is encountered.
+            // Exceptions will be thrown if invalid JSON formatting is encountered.
             strB.Append("Processing... ");
-            try
-            {
-                jsonObj = LWJson.Parse(jsonString);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(strB.ToString());
-                Console.WriteLine($"Invalid JSON provided. Exception thrown: {e.Message}");
-                return;
-            }
+            jsonObj = LWJson.Parse(jsonString);
             strB.AppendLine("Done!").AppendLine();
 
             // Display details about the processed JSON

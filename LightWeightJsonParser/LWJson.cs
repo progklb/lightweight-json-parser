@@ -9,6 +9,10 @@ namespace LightWeightJsonParser
         /// Represents a null instance of this type.
         /// </summary>
         public const LWJson NULL = null;
+        /// <summary>
+        /// The spacer added to output when going one level into an object. (This accumulates with each level to build a tree of output).
+        /// </summary>
+        private const string OUTPUT_SPACER = "   ";
         #endregion
 
 
@@ -153,17 +157,17 @@ namespace LightWeightJsonParser
             if (chunk[0] == '{')
             {
                 value = new LWJsonObject();
-                (value as LWJsonObject).Parse(chunk, outputSpacer + "\t");
+                (value as LWJsonObject).Parse(chunk, outputSpacer + OUTPUT_SPACER);
             }
             else if (chunk[0] == '[')
             {
                 value = new LWJsonArray();
-                (value as LWJsonArray).Parse(chunk, outputSpacer + "\t");
+                (value as LWJsonArray).Parse(chunk, outputSpacer + OUTPUT_SPACER);
             }
             else if (chunk == "null")
             {
                 value = null;
-                OnItemParsed($"{outputSpacer}null");
+                OnItemParsed($"{outputSpacer}   null");
             }
             else
             {
@@ -176,7 +180,7 @@ namespace LightWeightJsonParser
                     }
                 }
 
-                OnItemParsed($"{outputSpacer}{value.ToString()}");
+                OnItemParsed($"{outputSpacer}{OUTPUT_SPACER}{value.ToString()}");
             }
         }
 
@@ -279,7 +283,7 @@ namespace LightWeightJsonParser
                 }
             }
 
-            throw new Exception($"Failed to chunk the provided string - no appropriate closing character found.");
+            throw new Exception($"Failed to chunk the provided string - no appropriate closing character found. String provided: '{jsonString}'. Starting char: '{openingChar}'");
         }
         #endregion
 
