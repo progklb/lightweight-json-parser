@@ -6,7 +6,7 @@ namespace LightWeightJsonParser
     {
         #region CONSTANTS
         /// <summary>
-        /// Represents a null instance of this type.
+        /// Represents a null instance of this type. This can be used in place of a null value type.
         /// </summary>
         public const LWJson NULL = null;
         /// <summary>
@@ -51,7 +51,7 @@ namespace LightWeightJsonParser
 
         #region PROPERTIES
         /// <summary>
-        /// The string mode that determines the quotation marks used when outputting a <see cref="LWJson"/> object to a JSON string.
+        /// The string mode that determines the quotation marks used when outputting a <see cref="LWJson"/> item to a JSON string. Used for keys and string types.
         /// </summary>
         public static StringMode.Mode CurrentStringMode { get; set; } = StringMode.Mode.DoubleQuote;
         /// <summary>
@@ -60,42 +60,42 @@ namespace LightWeightJsonParser
         public static FailureMode CurrentFailureMode { get; set; } = FailureMode.Verbose;
 
         /// <summary>
-        /// The data type of this object.
+        /// The data type of this item.
         /// </summary>
         public virtual JsonDataType DataType { get; protected set; }
 
         /// <summary>
-        /// Whether this object is a string-based value.
+        /// Whether this item is a string-based value.
         /// { "key" : "string" }
         /// </summary>
         public bool IsString { get { return DataType == JsonDataType.String; } }
         /// <summary>
-        /// Whether this object is a boolean-based value.
+        /// Whether this item is a boolean-based value.
         /// { "key" : true }
         /// </summary>
         public bool IsBoolean { get { return DataType == JsonDataType.Boolean; } }
         /// <summary>
-        /// Whether this object is an integer-based value.
+        /// Whether this item is an integer-based value.
         /// { "key" : 25 }
         /// </summary>
         public bool IsInteger { get { return DataType == JsonDataType.Integer; } }
         /// <summary>
-        /// Whether this object is a double-based value.
+        /// Whether this item is a double-based value.
         /// { "key" : 1.8458 }
         /// </summary>
         public bool IsDouble { get { return DataType == JsonDataType.Double; } }
         /// <summary>
-        /// Whether this object is an an object representing a set of key-value pairs.
+        /// Whether this item is an an object representing a set of key-value pairs.
         /// { key : { ... } }
         /// </summary>
         public bool IsObject { get { return DataType == JsonDataType.Object; } }
         /// <summary>
-        /// Whether this object is an array of sub-objects of key-value pairs.
+        /// Whether this item is an array of sub-items.
         /// { "key" : [{...},...] }
         /// </summary>
         public bool IsArray { get { return DataType == JsonDataType.Array; } }
         /// <summary>
-        /// Whether this object is a simple value. Note that this is a convenience method for performing more specific type checks, 
+        /// Whether this item is a simple value. Note that this is a convenience method for performing more specific type checks, 
         /// as a <see cref="LWJsonValue"/> can represent any of <see cref="string"/>, <see cref="bool"/>, <see cref="int"/>, or <see cref="double"/>.
         /// { "key" : value }
         /// </summary>
@@ -104,12 +104,40 @@ namespace LightWeightJsonParser
 
 
         #region CASTING
+        /// <summary>
+        /// Returns this item as a string value.
+        /// </summary>
+        /// <returns>The string representation of this item.</returns>
         public virtual string AsString() => throw new InvalidCastException();
+        /// <summary>
+        /// Returns this item as a boolean value.
+        /// </summary>
+        /// <returns>The boolean representation of this item.</returns>
         public virtual bool AsBoolean() => throw new InvalidCastException();
+        /// <summary>
+        /// Returns this item as an integer value.
+        /// </summary>
+        /// <returns>The integer representation of this item.</returns>
         public virtual int AsInteger() => throw new InvalidCastException();
+        /// <summary>
+        /// Returns this item as a double value.
+        /// </summary>
+        /// <returns>The double representation of this item.</returns>
         public virtual double AsDouble() => throw new InvalidCastException();
+        /// <summary>
+        /// Returns this item as a JSON object.
+        /// </summary>
+        /// <returns>The JSON object representation of this item.</returns>
         public virtual LWJsonObject AsObject() => this is LWJsonObject ? this as LWJsonObject : throw new InvalidCastException($"Cannot cast object of type {DataType} to Object");
+        /// <summary>
+        /// Returns this item as a JSON array.
+        /// </summary>
+        /// <returns>The JSON array representation of this item.</returns>
         public virtual LWJsonArray AsArray() => this is LWJsonArray ? this as LWJsonArray : throw new InvalidCastException($"Cannot cast object of type {DataType} to Array");
+        /// <summary>
+        /// Returns this item as a <see cref="LWJsonValue"/>. This is a container type for any of <see cref="string"/>, <see cref="bool"/>, <see cref="int"/>, or <see cref="double"/>. 
+        /// </summary>
+        /// <returns>The <see cref="LWJsonValue"/> representation of this item.</returns>
         public virtual LWJsonValue AsValue() => this is LWJsonValue ? this as LWJsonValue : throw new InvalidCastException($"Cannot cast object of type {DataType} to Value");
         #endregion
 
@@ -307,7 +335,7 @@ namespace LightWeightJsonParser
 
         /// <summary>
         /// Adds enclosing quote characters to the provided string and returns.
-        /// The tyoe of quote added is based on the value of <see cref="CurrentStringMode"/>.
+        /// The type of quote added is based on the value of <see cref="CurrentStringMode"/>.
         /// </summary>
         /// <param name="val">The string to add quotes to.</param>
         /// <returns>The provided string wrapped in quotes.</returns>
