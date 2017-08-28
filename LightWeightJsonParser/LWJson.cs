@@ -293,7 +293,7 @@ namespace LightWeightJsonParser
             {
                 for (int i = startingIdx + 1; i < jsonString.Length; ++i)
                 {
-                    if (jsonString[i] == openingChar)
+                    if (jsonString[i] == openingChar && jsonString[i - 1] != '\\')
                     {
                         return jsonString.Substring(startingIdx, i - startingIdx + 1);
                     }
