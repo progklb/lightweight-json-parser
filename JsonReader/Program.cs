@@ -4,6 +4,9 @@ using LightWeightJsonParser;
 
 namespace JsonReader
 {
+	/// <summary>
+	/// A simple terminal application to test the <see cref="LWJson"/> library.
+	/// </summary>
     class Program
     {
         #region ENTRY POINT
@@ -11,31 +14,25 @@ namespace JsonReader
         {
             LWJson.CurrentStringMode = StringMode.Mode.DoubleQuote;
             LWJson.CurrentFailureMode = FailureMode.Silent;
+			LWJson.CheckEscapedCharacters = true;
 
             LWJson.OnItemParsed += (s) => { Console.WriteLine("- " + s); };
-
-			// Note: Problem with nested objects : { { "blah":"val" } }  -- is this even valid JSON ? :/
 
 			//ExamineJson(JsonExamples.SIMPLE_KVP_OBJECT, "Simple key-value object");
 			//ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
 			//ExamineJson(JsonExamples.SIMPLE_MIXED_EMPTY_OBJECT, "Simple mixed empty object");
-
 			//ExamineJson(JsonExamples.SIMPLE_KVP_ARRAY, "Simple key-value array");
-
 			//ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY_1, "Simple mixed array 1");
 			//ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY_2, "Simple mixed array 2");
 
 			//ExamineJson(JsonExamples.COMPLEX_MIXED_OBJECT, "Complex mixed string");
-
 			//ExamineJson(JsonExamples.COMPLEX_DIFF_TYPES_OBJECT, "Complex different types object");
 
 			//ExamineJson(JsonExamples.INVALID_OBJECT, "Invalid object");
 
 			//CreateJson();
-			ReadFromFile();
 
             Console.Read();
-
         }
         #endregion
 
@@ -150,9 +147,13 @@ namespace JsonReader
             Console.WriteLine(strB.ToString());
         }
 
-        static void ReadFromFile()
+		/// <summary>
+		/// Reads a text file containing JSON, converting it to a <see cref="LWJson"/> object and outputing the results to console.
+		/// </summary>
+		/// <param name="filename"></param>
+        static void ReadFromFile(string filename)
         {
-			var json = System.IO.File.ReadAllText("JsonException.txt");
+			var json = System.IO.File.ReadAllText(filename);
 			Console.WriteLine(json);
 
 			var jsonObj = LWJson.Parse(json);

@@ -58,11 +58,15 @@ namespace LightWeightJsonParser
         /// Determines how value parsing failures are handled.
         /// </summary>
         public static FailureMode CurrentFailureMode { get; set; } = FailureMode.Verbose;
+		/// <summary>
+		/// If set to true, parsing will ignore any closing quote characters that are preceded by a backslash.
+		/// </summary>
+		public static bool CheckEscapedCharacters { get; set; } = true;
 
-        /// <summary>
-        /// The data type of this item.
-        /// </summary>
-        public virtual JsonDataType DataType { get; protected set; }
+		/// <summary>
+		/// The data type of this item.
+		/// </summary>
+		public virtual JsonDataType DataType { get; protected set; }
 
         /// <summary>
         /// Whether this item is a string-based value.
@@ -195,7 +199,7 @@ namespace LightWeightJsonParser
             else if (chunk == "null")
             {
                 value = null;
-                OnItemParsed($"{outputSpacer}   null");
+                OnItemParsed($"{outputSpacer}{OUTPUT_SPACER}null");
             }
             else
             {
@@ -293,7 +297,7 @@ namespace LightWeightJsonParser
             {
                 for (int i = startingIdx + 1; i < jsonString.Length; ++i)
                 {
-                    if (jsonString[i] == openingChar && jsonString[i - 1] != '\\')
+                    if (jsonString[i] == openingChar && (CheckEscapedCharacters && jsonString[i - 1] != '\\'))
                     {
                         return jsonString.Substring(startingIdx, i - startingIdx + 1);
                     }
