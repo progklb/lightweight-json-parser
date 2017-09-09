@@ -317,22 +317,78 @@ namespace LightWeightJsonParser
 
             throw new Exception($"Failed to chunk the provided string - no appropriate closing character found. String provided: '{jsonString}'. Starting char: '{openingChar}'");
         }
-        #endregion
+		#endregion
 
 
-        #region HELPERS
-        /// <summary>
-        /// Outputs this object as a formatted JSON string.
-        /// </summary>
-        /// <returns>Formatted JSON representation of this object.</returns>
-        new public abstract string ToString();
+		#region ESCAPE SEQUENCE HANDLING
+		/// <summary>
+		/// Provided a string, this will convert any escape characters made up of two characters into their single character equivalent.
+		/// </summary>
+		/// <param name="text">String to convert all escape characters.</param>
+		/// <returns>Modified string.</returns>
+		public static string ConvertEscapeCharacters(string text)
+		{
+			string sequence;
+			for (int i = 0; i < text.Length - 1; i++)
+			{
+				if (text[i] == '\\')
+				{
+					sequence = string.Format("{0}{1}", text[i], text[i + 1]);
+					text = text.Remove(i, 2);
+					text = text.Insert(i, ConvertEscapeCharacterSequence(sequence));
+				}
+			}
 
-        /// <summary>
-        /// Checks whether the provided string is a valid JSON string quote character.
-        /// </summary>
-        /// <param name="character">String element to check.</param>
-        /// <returns>True if the provided string element is a string-type quote character.</returns>
-        internal static bool IsStringQuote(char character)
+			return text;
+		}
+		/// <summary>
+		/// Provided a two-character sequence, this converts the sequence to a singular escaped character equivalent.
+		/// If the escape sequence is not recognized, the provided sequence will be returned unmodified.
+		/// </summary>
+		/// <param name="sequence">Sequence to convert.</param>
+		/// <returns>The converted character.</returns>
+		internal static string ConvertEscapeCharacterSequence(string sequence)
+		{
+			switch (sequence)
+			{
+				case @"\""":
+					return @"""";
+				case @"\'":
+					return "\'";
+
+				case @"\\":
+					return "\\";
+				case @"\n":
+					return "\n";
+				case @"\r":
+					return "\r";
+				case @"\t":
+					return "\t";
+				case @"\b":
+					return "\b";
+				case @"\f":
+					return "\f";
+
+				default:
+					return sequence;
+			}
+		}
+		#endregion
+
+
+		#region HELPERS
+		/// <summary>
+		/// Outputs this object as a formatted JSON string.
+		/// </summary>
+		/// <returns>Formatted JSON representation of this object.</returns>
+		new public abstract string ToString();
+
+		/// <summary>
+		/// Checks whether the provided string is a valid JSON string quote character.
+		/// </summary>
+		/// <param name="character">String element to check.</param>
+		/// <returns>True if the provided string element is a string-type quote character.</returns>
+		internal static bool IsStringQuote(char character)
         {
             return character ==  '\'' || character == '\"';
         }

@@ -54,10 +54,5 @@
       <Name>LightWeightJsonParser</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="JsonException.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

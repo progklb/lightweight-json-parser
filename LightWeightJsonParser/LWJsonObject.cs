@@ -211,12 +211,12 @@ namespace LightWeightJsonParser
             if (i != jsonChunk.Length - 1)
             {
                 string failedCharPreview = (jsonChunk.Length - i > 5) ?
-                    $"{jsonChunk[i - 2]}{jsonChunk[i - 1]}'{jsonChunk[i]}'{jsonChunk[i + 1]}{jsonChunk[i + 2]}" :
-                    $"'{jsonChunk[i]}'";
+                    $"{jsonChunk[i - 2]}{jsonChunk[i - 1]}{jsonChunk[i]}{jsonChunk[i + 1]}{jsonChunk[i + 2]}" :
+                    $"{jsonChunk[i]}";
 
                 throw new Exception("Parsing from JSON failed. Expected final character of object but this is not the case! " +
-                    $"(final index = {jsonChunk.Length - 1}, current index = {i}) " +
-                    $"(current index = {failedCharPreview})");
+                    $"(final index = {jsonChunk.Length - 1}, current index = {i}, failed char = {jsonChunk[i]}) " +
+                    $"(current index = [{failedCharPreview}])");
             }
         }
 
