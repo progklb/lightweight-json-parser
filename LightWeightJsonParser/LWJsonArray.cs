@@ -37,11 +37,15 @@ namespace LightWeightJsonParser
         /// Holds the set of objects contained by this array.
         /// </summary>
         public List<LWJson> ArrayData { get; set; }
-        #endregion
+		/// <summary>
+		/// The number of items currently held in this array.
+		/// </summary>
+		public int Count { get { return ArrayData.Count; } }
+		#endregion
 
 
-        #region CONSTRUCTOR
-        public LWJsonArray(params LWJson[] objects)
+		#region CONSTRUCTOR
+		public LWJsonArray(params LWJson[] objects)
         {
             ArrayData = new List<LWJson>();
             Add(objects);
