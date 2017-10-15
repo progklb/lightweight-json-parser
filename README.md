@@ -1,4 +1,4 @@
-# Light-Weight JSON Parser
+# Lightweight JSON Parser
 
 LWJP is a JSON parser written in C# that has only `System` as a dependency. Many of the available parsers are limited and/or require external dependencies - some of which are not compatible across different systems (such as Windows vs MacOS). LWJP aims to solve this. It was written as part of a larger project and has been tested with various web APIs.
 
