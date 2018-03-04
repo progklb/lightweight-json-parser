@@ -2,15 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.1</TargetFramework>
+    <Authors>Kevin Baynham</Authors>
+    <Company>Kevin Baynham</Company>
+    <PackageTags>json</PackageTags>
+    <PackageProjectUrl>https://github.com/0bl1v1on/vs-lightweight-json-parser</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/0bl1v1on/vs-lightweight-json-parser</RepositoryUrl>
+    <Description>A lightweight JSON parser that uses only the .NET System package as a dependency.</Description>
+    <PackageId>LightWeightJsonParser</PackageId>
+    <Product>LightWeightJsonParser</Product>
+    <Copyright>Copyright (c) 2018 Kevin Baynham</Copyright>
+    <PackageReleaseNotes />
   </PropertyGroup>
-
-  <ItemGroup>
-    <COMReference Include="{bee4bfec-6683-3e67-9167-3c0cbc68f40a}">
-      <Guid>bee4bfec-6683-3e67-9167-3c0cbc68f40a</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>4</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-    </COMReference>
-  </ItemGroup>
 
 </Project>

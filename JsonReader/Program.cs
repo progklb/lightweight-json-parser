@@ -18,6 +18,8 @@ namespace JsonReader
 
             LWJson.OnItemParsed += (s) => { Console.WriteLine("- " + s); };
 
+			/* In order to test parsing enable the below method calls.*/
+
 			//ExamineJson(JsonExamples.SIMPLE_KVP_OBJECT, "Simple key-value object");
 			//ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
 			//ExamineJson(JsonExamples.SIMPLE_MIXED_EMPTY_OBJECT, "Simple mixed empty object");
