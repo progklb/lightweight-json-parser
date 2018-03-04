@@ -1,5 +1,9 @@
 # Lightweight JSON Parser
 
+
+[![NuGet](https://img.shields.io/nuget/v/LightWeightJsonParser.svg?style=flat-square)](https://www.nuget.org/packages/LightWeightJsonParser/)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](https://github.com/0bl1v1on/vs-lightweight-json-parser/blob/master/LICENSE.md)
+
 LWJP is a JSON parser written in C# that has only `System` as a dependency. Many of the available parsers are limited and/or require external dependencies - some of which are not compatible across different systems (such as Windows vs MacOS). LWJP aims to solve this. It was written as part of a larger project and has been tested with various web APIs.
 
 
