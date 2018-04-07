@@ -12,6 +12,8 @@
     <Product>LightWeightJsonParser</Product>
     <Copyright>Copyright (c) 2018 Kevin Baynham</Copyright>
     <PackageReleaseNotes />
+    <Version>1.0.1</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>
