@@ -24,8 +24,8 @@ namespace LightWeightJsonParser
 
         public override LWJson this[string key]
         {
-            get { throw new Exception("An string-based key is not a valid indexer for this data type. An integer-based index is required."); }
-            set { throw new Exception("An string-based key is not a valid indexer for this data type. An integer-based index is required."); }
+            get { throw new LWJPException("An string-based key is not a valid indexer for this data type. An integer-based index is required."); }
+            set { throw new LWJPException("An string-based key is not a valid indexer for this data type. An integer-based index is required."); }
         }
         #endregion
 
@@ -137,7 +137,7 @@ namespace LightWeightJsonParser
                     $"{jsonChunk[i - 2]}{jsonChunk[i - 1]}'{jsonChunk[i]}'{jsonChunk[i + 1]}{jsonChunk[i + 2]}" :
                     $"'{jsonChunk[i]}'";
 
-                throw new Exception("Parsing from JSON failed. Expected final character of array but this is not the case! " +
+                throw new LWJPException("Parsing from JSON failed. Expected final character of array but this is not the case! " +
                     $"(final index = {jsonChunk.Length - 1}, current index = {i}) " +
                     $"(current index = {failedCharPreview})");
             }
@@ -171,7 +171,7 @@ namespace LightWeightJsonParser
         {
             if (jsonChunk[0] != '[' || jsonChunk[jsonChunk.Length - 1] != ']')
             {
-                throw new Exception($"Invalid starting/ending character provided for parsing by {nameof(LWJsonArray)}:" +
+                throw new LWJPException($"Invalid starting/ending character provided for parsing by {nameof(LWJsonArray)}:" +
                     $"Starting=\"{jsonChunk[0]}\" " +
                     $"Ending=\"{jsonChunk[jsonChunk.Length - 1]}\"");
             }

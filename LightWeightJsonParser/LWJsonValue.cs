@@ -109,7 +109,7 @@ namespace LightWeightJsonParser
             }
             else
             {
-                switch (LWJson.CurrentFailureMode)
+                switch (CurrentFailureMode)
                 {
                     case FailureMode.Silent:
                         Value = value;
@@ -118,9 +118,10 @@ namespace LightWeightJsonParser
                         Value = $"value_parse_failure({value})";
                         break;
                     case FailureMode.Exception:
-                        throw new Exception($"Failed to parse value: {value}");
-                }
-            }
+					default:
+						throw new LWJPException($"Failed to parse value: {value}");
+				}
+			}
 
             return success;
         }

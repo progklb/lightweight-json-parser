@@ -12,7 +12,7 @@ namespace LightWeightJsonParser
         /// <summary>
         /// The spacer added to output when going one level into an object. (This accumulates with each level to build a tree of output).
         /// </summary>
-        private const string OUTPUT_SPACER = "   ";
+        private static readonly string OUTPUT_SPACER = "   ";
         #endregion
 
 
@@ -72,38 +72,38 @@ namespace LightWeightJsonParser
         /// Whether this item is a string-based value.
         /// { "key" : "string" }
         /// </summary>
-        public bool IsString { get { return DataType == JsonDataType.String; } }
+        public bool IsString { get => DataType == JsonDataType.String; }
         /// <summary>
         /// Whether this item is a boolean-based value.
         /// { "key" : true }
         /// </summary>
-        public bool IsBoolean { get { return DataType == JsonDataType.Boolean; } }
+        public bool IsBoolean { get => DataType == JsonDataType.Boolean; }
         /// <summary>
         /// Whether this item is an integer-based value.
         /// { "key" : 25 }
         /// </summary>
-        public bool IsInteger { get { return DataType == JsonDataType.Integer; } }
+        public bool IsInteger { get => DataType == JsonDataType.Integer; }
         /// <summary>
         /// Whether this item is a double-based value.
         /// { "key" : 1.8458 }
         /// </summary>
-        public bool IsDouble { get { return DataType == JsonDataType.Double; } }
+        public bool IsDouble { get => DataType == JsonDataType.Double; }
         /// <summary>
         /// Whether this item is an an object representing a set of key-value pairs.
         /// { key : { ... } }
         /// </summary>
-        public bool IsObject { get { return DataType == JsonDataType.Object; } }
+        public bool IsObject { get => DataType == JsonDataType.Object; }
         /// <summary>
         /// Whether this item is an array of sub-items.
         /// { "key" : [{...},...] }
         /// </summary>
-        public bool IsArray { get { return DataType == JsonDataType.Array; } }
+        public bool IsArray { get => DataType == JsonDataType.Array; }
         /// <summary>
         /// Whether this item is a simple value. Note that this is a convenience method for performing more specific type checks, 
         /// as a <see cref="LWJsonValue"/> can represent any of <see cref="string"/>, <see cref="bool"/>, <see cref="int"/>, or <see cref="double"/>.
         /// { "key" : value }
         /// </summary>
-        public bool IsValue { get { return (this is LWJsonValue); } }
+        public bool IsValue { get => (this is LWJsonValue); }
         #endregion
 
 
@@ -171,7 +171,7 @@ namespace LightWeightJsonParser
                     (json as LWJsonArray).Parse(jsonString);
                     break;
                 default:
-                    throw new Exception($"Invalid initial character of JSON string: \"{jsonString[0]}\"");
+                    throw new LWJPException($"Invalid initial character of JSON string: \"{jsonString[0]}\"");
             }
 
             return json;
@@ -256,7 +256,7 @@ namespace LightWeightJsonParser
                     closingChar = ']';
                     break;
                 default:
-                    throw new Exception($"Invalid opening character of JSON object/array: \"{openingChar}\"" +
+                    throw new LWJPException($"Invalid opening character of JSON object/array: \"{openingChar}\"" +
                         "\nPlease provide a start index that corresponds to the opening of an object/array.");
             }
 
@@ -315,7 +315,7 @@ namespace LightWeightJsonParser
                 }
             }
 
-            throw new Exception($"Failed to chunk the provided string - no appropriate closing character found. String provided: '{jsonString}'. Starting char: '{openingChar}'");
+            throw new LWJPException($"Failed to chunk the provided string - no appropriate closing character found. String provided: '{jsonString}'. Starting char: '{openingChar}'");
         }
 		#endregion
 
@@ -399,9 +399,9 @@ namespace LightWeightJsonParser
         /// </summary>
         /// <param name="val">The string to add quotes to.</param>
         /// <returns>The provided string wrapped in quotes.</returns>
-        internal string WrapInQuotes(string val)
+        internal static string WrapInQuotes(string val)
         {
-            var quote = LWJson.CurrentStringMode == StringMode.Mode.SingleQuote ? StringMode.SINGLE_QUOTE : StringMode.DOUBLE_QUOTE;
+            var quote = CurrentStringMode == StringMode.Mode.SingleQuote ? StringMode.SINGLE_QUOTE : StringMode.DOUBLE_QUOTE;
             return $"{quote}{val}{quote}";
         }
 

@@ -19,14 +19,14 @@ namespace LightWeightJsonParser
         #region INDEXERS
         public override LWJson this[int i]
         {
-            get { throw new Exception("An integer-based index is not a valid indexer for this data type. A string-based key is required."); }
-            set { throw new Exception("An integer-based index is not a valid indexer for this data type. A string-based key is required."); }
+            get { throw new LWJPException("An integer-based index is not a valid indexer for this data type. A string-based key is required."); }
+            set { throw new LWJPException("An integer-based index is not a valid indexer for this data type. A string-based key is required."); }
         }
 
         public override LWJson this[string key]
         {
-            get => ObjectData[key];
-            set => ObjectData[key] = (LWJsonObject)value;
+            get => m_ObjectData[key];
+            set => m_ObjectData[key] = (LWJsonObject)value;
         }
         #endregion
 
@@ -34,10 +34,15 @@ namespace LightWeightJsonParser
         #region PROPERTIES
         public override JsonDataType DataType { get { return JsonDataType.Object; } }
 
-        /// <summary>
-        /// Holds the set of key-value pairs of this object.
-        /// </summary>
-        public Dictionary<string, LWJson> ObjectData = new Dictionary<string, LWJson>();
+		/// <summary>
+		/// Holds the set of key-value pairs of this object.
+		/// </summary>
+		public Dictionary<string, LWJson> ObjectData = new Dictionary<string, LWJson>();
+		#endregion
+
+
+		#region VARIABLES
+		private Dictionary<string, LWJson> m_ObjectData = new Dictionary<string, LWJson>();
         #endregion
 
 
@@ -50,7 +55,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, string value)
         {
-            ObjectData.Add(key, new LWJsonValue(value));
+            m_ObjectData.Add(key, new LWJsonValue(value));
             return this;
         }
 
@@ -62,7 +67,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, bool value)
         {
-            ObjectData.Add(key, new LWJsonValue(value));
+            m_ObjectData.Add(key, new LWJsonValue(value));
             return this;
         }
 
@@ -74,7 +79,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, int value)
         {
-            ObjectData.Add(key, new LWJsonValue(value));
+            m_ObjectData.Add(key, new LWJsonValue(value));
             return this;
         }
 
@@ -86,7 +91,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, double value)
         {
-            ObjectData.Add(key, new LWJsonValue(value));
+            m_ObjectData.Add(key, new LWJsonValue(value));
             return this;
         }
 
@@ -98,7 +103,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Add(string key, LWJson value)
         {
-            ObjectData.Add(key, value);
+            m_ObjectData.Add(key, value);
             return this;
         }
 
@@ -109,7 +114,7 @@ namespace LightWeightJsonParser
         /// <returns>This instance for chaining.</returns>
         public LWJsonObject Remove(string key)
         {
-            ObjectData.Remove(key);
+            m_ObjectData.Remove(key);
             return this;
         }
 
@@ -120,7 +125,7 @@ namespace LightWeightJsonParser
         /// <returns>True if this object contains a data-pair with the provided key, false otherwise.</returns>
         public bool ContainsKey(string key)
         {
-            return ObjectData.ContainsKey(key);
+            return m_ObjectData.ContainsKey(key);
         }
 
         /// <summary>
@@ -129,7 +134,7 @@ namespace LightWeightJsonParser
         /// <returns>The number of data-pairs contained in the object.</returns>
         public int Count()
         {
-            return ObjectData.Count;
+            return m_ObjectData.Count;
         }
 
         /// <summary>
@@ -137,7 +142,7 @@ namespace LightWeightJsonParser
         /// </summary>
         public void Clear()
         {
-            ObjectData.Clear();
+            m_ObjectData.Clear();
         }
         #endregion
 
@@ -147,7 +152,7 @@ namespace LightWeightJsonParser
         {
             // Check that we have valid JSON and clear this object's data (incase of reuse)
             CheckChunkValidity(jsonChunk);
-            ObjectData = new Dictionary<string, LWJson>();
+            m_ObjectData = new Dictionary<string, LWJson>();
 
             // Break into key-value pairs.
             // Note that we start after the opening '{' and end before the closing '}'
@@ -200,7 +205,7 @@ namespace LightWeightJsonParser
                 ParseChunk(out value, chunk, outputSpacer);
 
 				// Add key value pair
-				if (!ObjectData.ContainsKey(key))
+				if (!m_ObjectData.ContainsKey(key))
 				{
 					Add(key, value);
 				}
@@ -217,7 +222,7 @@ namespace LightWeightJsonParser
                     $"{jsonChunk[i - 2]}{jsonChunk[i - 1]}{jsonChunk[i]}{jsonChunk[i + 1]}{jsonChunk[i + 2]}" :
                     $"{jsonChunk[i]}";
 
-                throw new Exception("Parsing from JSON failed. Expected final character of object but this is not the case! " +
+                throw new LWJPException("Parsing from JSON failed. Expected final character of object but this is not the case! " +
                     $"(final index = {jsonChunk.Length - 1}, current index = {i}, failed char = {jsonChunk[i]}) " +
                     $"(current index = [{failedCharPreview}])");
             }
@@ -229,7 +234,7 @@ namespace LightWeightJsonParser
             int iterations = 0;
 
             sb.Append("{");
-            foreach (var pair in ObjectData)
+            foreach (var pair in m_ObjectData)
             {
                 if (iterations++ != 0)
                 {
@@ -250,11 +255,11 @@ namespace LightWeightJsonParser
         /// and ends with a closed curly brace '}'. Thus, the expected format is '{...}'.
         /// </summary>
         /// <param name="jsonChunk"></param>
-        private void CheckChunkValidity(string jsonChunk)
+        private static void CheckChunkValidity(string jsonChunk)
         {
             if (jsonChunk[0] != '{' || jsonChunk[jsonChunk.Length - 1] != '}')
             {
-                throw new Exception($"Invalid starting/ending character provided for parsing by {nameof(LWJsonObject)}:" +
+                throw new LWJPException($"Invalid starting/ending character provided for parsing by {nameof(LWJsonObject)}:" +
                     $"Starting=\"{jsonChunk[0]}\" " +
                     $"Ending=\"{jsonChunk[jsonChunk.Length - 1]}\"");
             }
