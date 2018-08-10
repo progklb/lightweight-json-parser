@@ -5,7 +5,7 @@ namespace LightWeightJsonParser
 	/// <summary>
 	/// Custom exception to be used for LWJP errors.
 	/// </summary>
-    class LWJPException : Exception
+    internal class LWJPException : Exception
     {
 		public LWJPException()
 		{

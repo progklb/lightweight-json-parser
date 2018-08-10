@@ -31,7 +31,7 @@ namespace JsonReader
 			//ExamineJson(JsonExamples.ComplexMixedObject, "Complex mixed object");
 			//ExamineJson(JsonExamples.ComplexDiffTypesObject, "Complex different types object");
 
-			ExamineJson(JsonExamples.InvalidObject, "Invalid object");
+			// ExamineJson(JsonExamples.InvalidObject, "Invalid object");
 
 			//CreateJson();
 
