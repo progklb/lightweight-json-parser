@@ -18,23 +18,24 @@ namespace JsonReader
 
             LWJson.OnItemParsed += (s) => { Console.WriteLine("- " + s); };
 
-			/* In order to test parsing enable the below method calls.*/
+			/* In order to test parsing, enable the below method calls.*/
 
-			//ExamineJson(JsonExamples.SIMPLE_KVP_OBJECT, "Simple key-value object");
-			//ExamineJson(JsonExamples.SIMPLE_MIXED_OBJECT, "Simple mixed object");
-			//ExamineJson(JsonExamples.SIMPLE_MIXED_EMPTY_OBJECT, "Simple mixed empty object");
-			//ExamineJson(JsonExamples.SIMPLE_KVP_ARRAY, "Simple key-value array");
-			//ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY_1, "Simple mixed array 1");
-			//ExamineJson(JsonExamples.SIMPLE_MIXED_ARRAY_2, "Simple mixed array 2");
+			//ExamineJson(JsonExamples.SimpleKVPObject, "Simple key-value object");
+			//ExamineJson(JsonExamples.SimpleMixedObject, "Simple mixed object");
+			//ExamineJson(JsonExamples.SimpleMixedEmptyObject, "Simple mixed empty object");
 
-			//ExamineJson(JsonExamples.COMPLEX_MIXED_OBJECT, "Complex mixed string");
-			//ExamineJson(JsonExamples.COMPLEX_DIFF_TYPES_OBJECT, "Complex different types object");
+			//ExamineJson(JsonExamples.SimpleKVPArray, "Simple key-value array");
+			//ExamineJson(JsonExamples.SimpleMixedArray1, "Simple mixed array 1");
+			//ExamineJson(JsonExamples.SimpleMixedArray2, "Simple mixed array 2");
 
-			//ExamineJson(JsonExamples.INVALID_OBJECT, "Invalid object");
+			//ExamineJson(JsonExamples.ComplexMixedObject, "Complex mixed object");
+			//ExamineJson(JsonExamples.ComplexDiffTypesObject, "Complex different types object");
+
+			ExamineJson(JsonExamples.InvalidObject, "Invalid object");
 
 			//CreateJson();
 
-            Console.Read();
+			Console.Read();
         }
         #endregion
 

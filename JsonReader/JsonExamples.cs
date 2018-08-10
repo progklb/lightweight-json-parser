@@ -1,139 +1,34 @@
-﻿namespace JsonReader
+﻿using System.IO;
+
+namespace JsonReader
 {
     public static class JsonExamples
     {
-        #region CONSTANTS
-        public const string SIMPLE_KVP_OBJECT =
-@"{
-    ""id"": ""Dwu85P9SOIk"",
-    ""created_at"": ""2016 - 05 - 03T11:00:28 - 04:00"",
-    ""updated_at"": ""2016 - 07 - 10T11:00:01 - 05:00"",
-    ""width"": 2448,
-    ""height"": 3264,
-    ""color"": ""#6E633A"",
-    ""downloads"": 1345,
-    ""likes"": 24,
-    ""liked_by_user"": false,
-    ""description"": ""A man drinking a coffee, 'elegantly'."",
-    'remarks': 'Fantastic photo!'
-}";
+		#region PROPERTIES
+		public static string SimpleKVPObject { get => ReadFromFile("Examples/Simple_KVP_Object.json"); }
+		public static string SimpleMixedObject { get => ReadFromFile("Examples/Simple_Mixed_Object.json"); }
+		public static string SimpleMixedEmptyObject { get => ReadFromFile("Examples/Simple_Mixed_Empty_Object.json"); }
 
-        public const string SIMPLE_MIXED_EMPTY_OBJECT =
-@"{
-    ""id"": ""Dwu85P9SOIk"",
-    ""exif"":{}
-}";
+		public static string SimpleKVPArray { get => ReadFromFile("Examples/Simple_KVP_Array.json"); }
+		public static string SimpleMixedArray1 { get => ReadFromFile("Examples/Simple_Mixed_Array_1.json"); }
+		public static string SimpleMixedArray2 { get => ReadFromFile("Examples/Simple_Mixed_Array_2.json"); }
 
-        public const string SIMPLE_MIXED_OBJECT =
-@"{
-    ""id"": ""Dwu85P9SOIk"",
-    ""downloads"": 1345,
-    ""likes"": 24,
-    ""liked_by_user"": false,
-    ""description"": ""A man drinking a coffee."",
-    ""exif"": {
-            ""make"": ""Canon"",
-            ""model"": ""Canon EOS 40D"",
-            ""exposure_time"": ""0.011111111111111112"",
-            ""aperture"": ""4.970854"",
-            ""focal_length"": ""37"",
-            ""iso"": 100
-            }
-}";
+		public static string ComplexMixedObject { get => ReadFromFile("Examples/Complex_Mixed_Object.json"); }
+		public static string ComplexDiffTypesObject { get => ReadFromFile("Examples/Complex_Diff_Types_Object.json"); }
 
-        public const string SIMPLE_KVP_ARRAY =
-@"[{
-    'a': { 'id': 'Dwu85P9SOIk' },
-    'b': { 'id': 'uAKJ6874Ffy' }
-}]";
-
-        public const string SIMPLE_MIXED_ARRAY_1 =
-@"{ 'entries' : ['test','test'], 'emptyentry' : [] }";
-
-        public const string SIMPLE_MIXED_ARRAY_2 =
-@"{ 'entries' : 
-    [
-        { 'exif': {'focal_length': '270', 'iso': 400 } },
-        { 'exif': {'focal_length': '270', 'iso': 400 } }
-    ]
-}";
-
-        public const string COMPLEX_MIXED_OBJECT =
-@"{
-    ""id"": ""Dwu85P9SOIk"",
-    ""created_at"": ""2016 - 05 - 03T11:00:28 - 04:00"",
-    ""updated_at"": ""2016 - 07 - 10T11:00:01 - 05:00"",
-    ""width"": 2448,
-    ""height"": 3264,
-    ""color"": ""#6E633A"",
-    ""downloads"": 1345,
-    ""likes"": 24,
-    ""liked_by_user"": false,
-    ""description"": ""A man drinking a coffee."",
-    ""exif"": {
-        ""make"": ""Canon"",
-        ""model"": ""Canon EOS 40D"",
-        ""exposure_time"": ""0.011111111111111112"",
-        ""aperture"": ""4.970854"",
-        ""focal_length"": ""37"",
-        ""iso"": 100
-        },
-    ""location"": {
-        ""city"": ""Montreal"",
-        ""country"": ""Canada"",
-        ""position"": {
-            ""latitude"": 45.4732984,
-            ""longitude"": -73.6384879
-            }
-        },
-    ""categories"": [
-        {
-            ""id"": 4,
-            ""title"": ""Nature"",
-            ""photo_count"": 24783,
-            ""links"": {
-                ""self"": ""https://api.unsplash.com/categories/4"",
-                ""photos"": ""https://api.unsplash.com/categories/4/photos""
-                }
-        },
-        {
-            ""id"": 5,
-            ""title"": ""Home"",
-            ""photo_count"": 6581,
-            ""links"": {
-                ""self"": ""https://api.unsplash.com/categories/5"",
-                ""photos"": ""https://api.unsplash.com/categories/5/photos""
-            }
-        }
-    ]
-}";
+		public static string InvalidObject { get => ReadFromFile("Examples/Invalid_Object.json"); }
+		#endregion
 
 
-        public const string COMPLEX_DIFF_TYPES_OBJECT =
-@"{
-    ""string"": ""This is a string with 'quotes' and stuff."",
-    ""date"": ""2016 - 07 - 10T11:00:01 - 05:00"",
-    ""boolean"": true,
-    ""null"" : null,
-    ""object_empty"" : {},
-    ""object_single"" : { ""key"" : ""value"" },
-    ""object_double"" : { ""key1"" : ""value1"", ""key2"" : ""value2"" },
-    ""int"": 123,
-    ""frac_1"": 123.123,
-    ""frac_2"": .123,
-    ""exp_1"": 1e5,
-    ""exp_frac_1"": 1.24e5,
-    ""exp_frac_2"": 1.24e+5,
-    ""exp_frac_3"": 1.24e-5,
-    ""exp_frac_4"": 1.24E+5,
-    ""signed_int"": -1,
-    ""signed_frac_1"": -1.24,
-    ""signed_frac_2"": +1.24,
-    ""signed_exp_frac_2"": -1.24e+5
-}";
-
-        public const string INVALID_OBJECT = 
-@" ({}";
-        #endregion
-    }
+		#region HELPER FUNCTIONS
+		/// <summary>
+		/// Reads a text file containing JSON, converting it to a <see cref="LWJson"/> object and outputing the results to console.
+		/// </summary>
+		/// <param name="filename"></param>
+		static string ReadFromFile(string filename)
+		{
+			return File.ReadAllText(filename);
+		}
+		#endregion
+	}
 }
