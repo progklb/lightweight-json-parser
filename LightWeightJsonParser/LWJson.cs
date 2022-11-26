@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LightWeightJsonParser
 {
@@ -38,8 +39,13 @@ namespace LightWeightJsonParser
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
-        #endregion
 
+        public virtual bool ContainsKey(string key) => false;
+
+        public virtual IEnumerator<LWJson> GetEnumerator() 
+            => throw new NotImplementedException();
+
+        #endregion
 
         #region EVENTS
         /// <summary>

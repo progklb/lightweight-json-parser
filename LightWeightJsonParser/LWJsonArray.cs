@@ -29,6 +29,11 @@ namespace LightWeightJsonParser
         }
         #endregion
 
+        public override IEnumerator<LWJson> GetEnumerator()
+        {
+            foreach (var lwJson in ArrayData)
+                yield return lwJson;
+        }
 
         #region PROPERTIES
         public override JsonDataType DataType { get { return JsonDataType.Array; } }

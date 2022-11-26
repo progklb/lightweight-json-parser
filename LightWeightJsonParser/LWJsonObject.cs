@@ -30,7 +30,6 @@ namespace LightWeightJsonParser
         }
         #endregion
 
-
         #region PROPERTIES
         public override JsonDataType DataType { get { return JsonDataType.Object; } }
 
@@ -123,7 +122,7 @@ namespace LightWeightJsonParser
         /// </summary>
         /// <param name="key"></param>
         /// <returns>True if this object contains a data-pair with the provided key, false otherwise.</returns>
-        public bool ContainsKey(string key)
+        public override bool ContainsKey(string key)
         {
             return m_ObjectData.ContainsKey(key);
         }
