@@ -2,8 +2,8 @@
 
 namespace JsonReader
 {
-    public static class JsonExamples
-    {
+	public static class JsonExamples
+	{
 		#region PROPERTIES
 		public static string SimpleKVPObject { get => ReadFromFile("Examples/Simple_KVP_Object.json"); }
 		public static string SimpleMixedObject { get => ReadFromFile("Examples/Simple_Mixed_Object.json"); }
