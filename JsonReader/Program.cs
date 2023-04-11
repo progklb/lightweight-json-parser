@@ -31,10 +31,18 @@ namespace JsonReader
 			//ExamineJson(JsonExamples.ComplexMixedObject, "Complex mixed object");
 			//ExamineJson(JsonExamples.ComplexDiffTypesObject, "Complex different types object");
 
-			// ExamineJson(JsonExamples.InvalidObject, "Invalid object");
+            try
+            {
+			    //ExamineJson(JsonExamples.InvalidObject, "Invalid object");
+            }
+            catch (LWJPException ex)
+            {
+				Console.WriteLine($"Failed to parse invalid JSON objetc. Exception thrown:\n\n{ex}");
+			}
 
-			//CreateJson();
+		    //CreateJson();
 
+            // Halt so that we don't close the terminal.
 			Console.Read();
         }
         #endregion
@@ -140,12 +148,12 @@ namespace JsonReader
             var cameras = root["cameras"];
             var camera2model = root["cameras"][1]["model"];
 
-            strB.AppendLine($"Name = {name}")
-                .AppendLine($"Age = {age}")
-                .AppendLine($"Has camera = {hasCam}")
-                .AppendLine($"Photos per day = {photosPerDay}")
-                .AppendLine($"Cameras = {cameras}")
-                .AppendLine($"Camera 2 make = {camera2model}");
+            strB.AppendLine($"Name = {name.ToString()}")
+                .AppendLine($"Age = {age.ToString()}")
+                .AppendLine($"Has camera = {hasCam.ToString()}")
+                .AppendLine($"Photos per day = {photosPerDay.ToString()}")
+                .AppendLine($"Cameras = {cameras.ToString()}")
+                .AppendLine($"Camera 2 model = {camera2model.ToString()}");
 
             Console.WriteLine(strB.ToString());
         }
